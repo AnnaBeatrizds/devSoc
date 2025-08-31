@@ -41,7 +41,11 @@ public class FuncionarioAction extends Action {
 		
 		return REDIRECT;
 	}
-	
+	public void validateNovo() {
+	    if (funcionarioVo.getNome() == null || funcionarioVo.getNome().trim().isEmpty()) {
+	        addFieldError("funcionarioVo.nome", "O nome do funcionário não pode ser vazio.");
+	    }
+	}
 	public String editar() {
 		if(funcionarioVo.getRowid() == null)
 			return REDIRECT;

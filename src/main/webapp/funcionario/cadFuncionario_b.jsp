@@ -31,7 +31,16 @@
 								<button class="btn btn-primary" type="submit"><s:text name="label.pesquisar"/></button>
 						</div>
 					</s:form>			
-				</div>				
+				</div>
+				<s:if test="filtrar.valorBusca != null">
+					<div class="col-sm p-0">
+						<div class="input-group">
+							<a href="todosFuncionarios.action" class="btn btn-primary">
+								Voltar
+							</a>
+						</div>
+					</div>
+				</s:if>
 			</div>
 
 			<div class="row">
