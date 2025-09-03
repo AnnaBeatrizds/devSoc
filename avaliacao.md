@@ -106,7 +106,7 @@ Com a aplicação iniciada, é possivel acessar o console do H2, que nos permite
 Caso venha algo preenchido nos campos **User Name** e **Password** remova.
 
 **Link para acesso**
->http://localhost:8080/avaliacao/h2-console
+>http://localhost:8080/h2-console
 
 **JDBC URL** 
 >_jdbc:h2:mem:avaliacao_

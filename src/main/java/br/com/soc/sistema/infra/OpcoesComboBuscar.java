@@ -2,6 +2,7 @@ package br.com.soc.sistema.infra;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,6 +40,10 @@ public enum OpcoesComboBuscar {
 	
 	private static Optional<OpcoesComboBuscar> getOpcao(String codigo){
 		return Optional.ofNullable(opcoes.get(codigo));
+	}
+	
+	public static List<OpcoesComboBuscar> getOpcoesComboBuscar() {
+		return Arrays.asList(OpcoesComboBuscar.values());
 	}
 	
 	public String getCodigo() {

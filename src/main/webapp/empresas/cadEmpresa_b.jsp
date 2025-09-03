@@ -4,8 +4,8 @@
 <html>
 	<head>
 		<meta charset="UTF8">
-		<title><s:text name="label.titulo.pagina.consulta"/></title>
-
+		<title><s:text name="label.titulo.pagina.consultaEmpresa"/></title>
+		
 		<s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
 		<link rel='stylesheet' href='${bootstrap_css}'>
 	</head>
@@ -13,33 +13,33 @@
 		<div class="container">
 			<div class="row mt-5 mb-2">
 				<div class="col-sm p-0">
-					<s:form action="/filtrarFuncionarios.action">
+					<s:form action="filtrar" namespace="/empresa">
 						<div class="input-group">
 							<span class="input-group-text">
 								<strong><s:text name="label.buscar.por"/></strong>
 							</span>	
 								<s:select  
 									cssClass="form-select" 
-									name="filtrar.opcoesCombo" 
+									name="filter.opcoesCombo" 
 									list="listaOpcoesCombo"  
 									headerKey=""  
 									headerValue="Escolha..." 
 									listKey="%{codigo}" 
 									listValueKey="%{descricao}"
-									value="filtrar.opcoesCombo.codigo"									
+									value="filter.opcoesCombo.codigo"									
 								/>
 								
-								<s:textfield cssClass="form-control" id="nome" name="filtrar.valorBusca"/>
+								<s:textfield cssClass="form-control" id="nome" name="filter.valorBusca"/>
 								<button class="btn btn-primary" type="submit" onclick="return validarBusca()">
     								<s:text name="label.pesquisar"/>
 								</button>
 						</div>
 					</s:form>			
 				</div>
-				<s:if test="filtrar.valorBusca != null">
+				<s:if test="filter.valorBusca != null">
 					<div class="col-sm p-0">
 						<div class="input-group">
-							<a href="todosFuncionarios.action" class="btn btn-primary">
+							<a href="<s:url action="todasEmpresas" namespace="/empresa" />" class="btn btn-primary">
 								Voltar
 							</a>
 						</div>
@@ -51,27 +51,28 @@
 				<table class="table table-light table-striped align-middle">
 					<thead>
 						<tr>
-							<th><s:text name="label.id"/></th>
-							<th><s:text name="label.nome"/></th>
+							<th><s:text name="label.codigo"/></th>
+							<th><s:text name="label.nomeEmpresa"/></th>
+							<th><s:text name="label.periodoDisponivel"/></th>
 							<th class="text-end mt-5"><s:text name="label.acao"/></th>
 						</tr>
 					</thead>
 					
 					<tbody>
-						<s:iterator value="funcionarios" >
+						<s:iterator value="empresas" >
 							<tr>
-								<td>${rowid}</td>
-								<td>${nome}</td>
+								<td><s:property value="codigo"/></td>
+								<td><s:property value="nome"/></td>
+								<td><s:property value="periodo"/></td>
 								<td class="text-end">
-									<s:url action="editarFuncionarios" var="editar">
-										<s:param name="funcionarioVo.rowid" value="rowid"></s:param>
+									<s:url action="editar" namespace="/empresa" var="editar">
+										<s:param name="empresaVo.codigo" value="%{codigo}"></s:param>
 									</s:url>
-
 									<a href="${editar}" class="btn btn-warning text-white">
 										<s:text name="label.editar"/>
 									</a>
 
-									<a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmarExclusao" data-rowid="${rowid}">
+									<a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmarExclusao" data-codigo="<s:property value='codigo'/>">
 										<s:text name="label.excluir"/>
 									</a>
 								</td>
@@ -81,20 +82,15 @@
 					
 					<tfoot class="table-secondary">
 						<tr>
-							<td colspan="3">
-								<s:url action="novoFuncionarios" var="novo"/>
-								
-								<a href="${novo}" class="btn btn-success">
-									<s:text name="label.novo"/>
-								</a>
+							<td colspan="4">
+								<s:url action="novo" namespace="/empresa" var="novo"/>
+									<a href="${novo}" class="btn btn-success">
+    									<s:text name="label.novo"/>
+									</a>
 							</td>
 						</tr>
 					</tfoot>				
 				</table>
-			</div>
-
-			<div class="row">
-			
 			</div>
 		</div>
 		
@@ -134,36 +130,33 @@
 			myModal.addEventListener('show.bs.modal', function(event) {
 				var button = event.relatedTarget;
 				
-				var rowid = button.getAttribute('data-rowid');
+				var codigo = button.getAttribute('data-codigo');
 				
 				var confirmButton = myModal.querySelector('#excluir');
 				
-				confirmButton.href = 'excluirFuncionario.action?rowid=' + rowid;
+				confirmButton.href = '/avaliacao/empresa/excluir.action?empresaVo.codigo=' + codigo;
 			});
 			
 			function validarBusca() {
-			    let filtro = document.querySelector("select[name='filtrar.opcoesCombo']").value;
-			    let valor = document.querySelector("input[name='filtrar.valorBusca']").value.trim();
+			    let filtro = document.querySelector("select[name='filter.opcoesCombo']").value;
+			    let valor = document.querySelector("input[name='filter.valorBusca']").value.trim();
 			
-			    // 1 - Não selecionou nenhuma opção
 			    if (filtro === "") {
 			        alert("Selecione se deseja buscar por ID ou Nome!");
 			        return false;
 			    }
 			
-			    // 2 - Selecionou ID mas não digitou número válido
 			    if (filtro === "1" && !/^[0-9]+$/.test(valor)) {
 			        alert("Digite apenas números para buscar por ID!");
 			        return false;
 			    }
 			
-			    // 3 - Selecionou Nome mas digitou número
 			    if (filtro === "2" && !/^[A-Za-zÀ-ÿ\s]+$/.test(valor)) {
 			        alert("Digite apenas letras para buscar por Nome!");
 			        return false;
 			    }
 			
-			    return true; // se passou em todas as validações, envia o form
+			    return true;
 			}
 		</script>
 	</body>

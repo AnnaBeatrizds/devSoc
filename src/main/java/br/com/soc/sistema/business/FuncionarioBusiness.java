@@ -9,8 +9,11 @@ import br.com.soc.sistema.filter.FuncionarioFilter;
 import br.com.soc.sistema.vo.FuncionarioVo;
 
 public class FuncionarioBusiness {
+    private static final String ERRO_CARACTER_NUMERO = "Foi informado um caracter no lugar de um numero";
+    private static final String NOME_VAZIO = "Nome nao pode ser em branco";
+    private static final String ERRO_INCLUSAO = "Nao foi possivel realizar a inclusao do registro";
+    private static final String ERRO_ALTERACAO = "Nao foi possivel realizar a alteracao do registro";
 
-	private static final String FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO = "Foi informado um caracter no lugar de um numero";
 	private FuncionarioDao dao;
 	
 	public FuncionarioBusiness() {
@@ -24,13 +27,12 @@ public class FuncionarioBusiness {
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
 		try {
 			if(funcionarioVo.getNome().isEmpty())
-				throw new IllegalArgumentException("Nome nao pode ser em branco");
+				throw new IllegalArgumentException(NOME_VAZIO);
 			
 			dao.insertFuncionario(funcionarioVo);
 		} catch (Exception e) {
-			throw new BusinessException("Nao foi possivel realizar a inclusao do registro");
+			throw new BusinessException(ERRO_INCLUSAO);
 		}
-		
 	}	
 	
 	public List<FuncionarioVo> filtrarFuncionarios(FuncionarioFilter filter){
@@ -42,7 +44,7 @@ public class FuncionarioBusiness {
 					Integer codigo = Integer.parseInt(filter.getValorBusca());
 					funcionarios.add(dao.findByCodigo(codigo));
 				}catch (NumberFormatException e) {
-					throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO);
+					throw new BusinessException(ERRO_CARACTER_NUMERO);
 				}
 			break;
 
@@ -59,7 +61,7 @@ public class FuncionarioBusiness {
 			Integer cod = Integer.parseInt(codigo);
 			return dao.findByCodigo(cod);
 		}catch (NumberFormatException e) {
-			throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO);
+			throw new BusinessException(ERRO_CARACTER_NUMERO);
 		}
 	}
 	
@@ -71,11 +73,11 @@ public class FuncionarioBusiness {
 	public void alterarFuncionario(FuncionarioVo funcionarioVo) throws Exception {
 	    try {
 	        if(funcionarioVo.getNome().isEmpty()) {
-	            throw new IllegalArgumentException("Nome nao pode ser em branco");
+	            throw new IllegalArgumentException(NOME_VAZIO);
 	        }
 	        dao.atualizarFuncionario(funcionarioVo);
 	    } catch (Exception e) {
-	        throw new Exception("Nao foi possivel realizar a alteracao do registro");
+	        throw new Exception(ERRO_ALTERACAO);
 	    }
 	}
 }

@@ -1,7 +1,12 @@
 package br.com.soc.sistema.exception;
 
-public class BusinessException extends RuntimeException{
-	public BusinessException(String mensagem) {
-		super(mensagem);
-	}
+public class BusinessException extends RuntimeException {
+    public BusinessException(String message) {
+        super(message);
+    }
+
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
+
