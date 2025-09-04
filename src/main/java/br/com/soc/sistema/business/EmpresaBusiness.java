@@ -1,6 +1,5 @@
 package br.com.soc.sistema.business;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,17 +35,18 @@ public class EmpresaBusiness {
         EmpresaVo empresa = empresaDao.buscarEmpresaCodigo(codigo);
       
         if (empresa != null) {
-            // Lógica para obter a lista de exames da empresa (para a tela de edição ou detalhes)
-            List<ExameVo> exames = exameDao.listarExamesPorEmpresa(codigo);
-         
-            // empresa.setExames(exames);
+            List<ExameVo> examesDaEmpresa = exameDao.listarExamesPorEmpresa(codigo);
+            List<Integer> idsDosExames = new ArrayList<>();
+            for(ExameVo exame : examesDaEmpresa) {
+                idsDosExames.add(exame.getId());
+            }
+            empresa.setExamesIds(idsDosExames);
         }
 
         return empresa;
     }
 
     public void salvarEmpresa(EmpresaVo empresa) {
-        
         if(empresa.getNome() == null || empresa.getNome().isEmpty()) {
             throw new BusinessException(NOME_VAZIO);
         }
@@ -60,7 +60,6 @@ public class EmpresaBusiness {
     }
 
     public void alterarEmpresa(EmpresaVo empresa) {
-       
         if(empresa.getNome() == null || empresa.getNome().isEmpty()) {
             throw new BusinessException(NOME_VAZIO);
         }
@@ -93,7 +92,7 @@ public class EmpresaBusiness {
             case ID:
                 try {
                     Integer codigo = Integer.parseInt(filter.getValorBusca());
-                    EmpresaVo empresa = empresaDao.buscarEmpresaCodigo(codigo);
+                    EmpresaVo empresa = buscarEmpresaPor(codigo); 
                     if (empresa != null) empresas.add(empresa);
                 } catch (NumberFormatException e) {
                     throw new BusinessException(ERRO_CARACTER_NUMERO);

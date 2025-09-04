@@ -12,53 +12,62 @@
 <body class="bg-secondary">
 
 <div class="container">
-    <s:form action="salvar" namespace="/empresa" id="formEmpresa">
+    <s:form action="salvar" id="formEmpresa">
         <s:hidden name="empresaVo.codigo"/>
 
         <div class="card mt-5">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-sm-5">
-                        <s:url action="todasEmpresas" namespace="/empresa" var="todas"/>
+         
+                   <div class="col-sm-5">
+                        <s:url action="todasEmpresas" var="todas"/>
                         <a href="${todas}" class="btn btn-success"><s:text name="label.empresas"/></a>
                     </div>
 
-                    <div class="col-sm">
+             
+                   <div class="col-sm">
                         <s:if test="empresaVo.codigo != null">
                             <h5 class="card-title"><s:text name="label.editarEmpresa"/></h5>
                         </s:if>
-                        <s:else>
+           
+                         <s:else>
                             <h5 class="card-title"><s:text name="label.novaEmpresa"/></h5>
                         </s:else>
                     </div>
-                </div>
+             
+               </div>
             </div>
 
             <div class="card-body">
                 <div class="row align-items-center">
                     <label for="id" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.codigo"/>
+     
                     </label>
                     <div class="col-sm-2">
                         <s:textfield cssClass="form-control" id="id" value="%{empresaVo.codigo}" readonly="true"/>
                     </div>
+                
                 </div>
 
                 <div class="row align-items-center mt-3">
                     <label for="nomeEmpresa" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.nomeEmpresa"/>
                     </label>
+            
                     <div class="col-sm-5">
                         <s:textfield cssClass="form-control" id="nomeEmpresa" name="empresaVo.nome" required="true"/>
                     </div>
                 </div>
 
                 <div class="row align-items-center mt-3">
-                    <label for="periodo" class="col-sm-1 col-form-label text-center">
+        
+                     <label for="periodo" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.periodoDisponivel"/>
                     </label>
                     <div class="col-sm-5">
-                        <s:select cssClass="form-control"
+                  
+                      <s:select cssClass="form-control"
                                   list="#{'Manhã':'Manhã', 'Tarde':'Tarde', 'Ambos':'Ambos'}"
                                   name="empresaVo.periodo"
                                   required="true"
@@ -71,13 +80,15 @@
                         <s:text name="label.exames"/>
                     </label>
                     <div class="col-sm-5">
-                        <s:checkboxlist name="empresaVo.examesIds"
+          
+                      <s:checkboxlist name="empresaVo.examesIds"
                                         list="listaTodosExames"
                                         listKey="id"
                                         listValue="nomeExame"
                                         value="%{empresaVo.examesIds}"/>
                     </div>
-                </div>
+     
+                   </div>
             </div>
 
             <div class="card-footer">
@@ -97,7 +108,8 @@
 
 <script>
     function limparFormulario() {
-        document.getElementById("formEmpresa").reset();
+  
+          document.getElementById("formEmpresa").reset();
     }
 </script>
 

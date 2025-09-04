@@ -4,7 +4,6 @@
     "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
-    <!-- Configurações gerais -->
     <constant name="struts.devMode" value="true" />
     <constant name="struts.ui.theme" value="simple" />
     <constant name="struts.enable.DynamicMethodInvocation" value="false" />
@@ -12,40 +11,39 @@
     <constant name="struts.action.excludePattern" value="/webjars/.*,/h2-console/*" />
     <constant name="struts.i18n.encoding" value="UTF-8" />
 
-    <!-- Pacote Funcionários -->
     <package name="br.com.soc.sistema" extends="struts-default" strict-method-invocation="false">
         <action name="*Funcionarios" class="br.com.soc.sistema.action.FuncionarioAction" method="{1}">
             <result name="success">/funcionario/cadFuncionario_b.jsp</result>
             <result name="input">/funcionario/cadFuncionario_i.jsp</result>
             <result name="redirect" type="redirectAction">todosFuncionarios</result>
         </action>
-	</package>
+    </package>
 		
-	<package name="Empresa" namespace="/empresa" extends="struts-default">
-    <action name="todasEmpresas" class="br.com.soc.sistema.action.EmpresaAction" method="listar">
-        <result name="success">/empresas/cadEmpresa_b.jsp</result>
-    </action>
+    <package name="Empresa" extends="struts-default">
+        <action name="todasEmpresas" class="br.com.soc.sistema.action.EmpresaAction" method="listar">
+            <result name="success">/empresas/cadEmpresa_b.jsp</result>
+        </action>
 
-    <action name="novo" class="br.com.soc.sistema.action.EmpresaAction" method="novo">
-        <result name="input">/empresas/cadEmpresa_i.jsp</result>
-    </action>
-    
-    <action name="salvar" class="br.com.soc.sistema.action.EmpresaAction" method="salvar">
-        <result name="success" type="redirectAction">todasEmpresas</result>
-        <result name="input">/empresas/cadEmpresa_i.jsp</result>
-    </action>
+        <action name="novo" class="br.com.soc.sistema.action.EmpresaAction" method="novo">
+            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        </action>
+        
+        <action name="salvar" class="br.com.soc.sistema.action.EmpresaAction" method="salvar">
+            <result name="success" type="redirectAction">todasEmpresas</result>
+            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        </action>
 
-    <action name="filtrar" class="br.com.soc.sistema.action.EmpresaAction" method="filtrar">
-        <result name="success">/empresas/cadEmpresa_b.jsp</result>
-    </action>
+        <action name="filtrar" class="br.com.soc.sistema.action.EmpresaAction" method="filtrar">
+            <result name="success">/empresas/cadEmpresa_b.jsp</result>
+        </action>
 
-    <action name="editar" class="br.com.soc.sistema.action.EmpresaAction" method="editar">
-        <result name="input">/empresas/cadEmpresa_i.jsp</result>
-    </action>
-    
-    <action name="excluir" class="br.com.soc.sistema.action.EmpresaAction" method="excluir">
-        <result name="success" type="redirectAction">todasEmpresas</result>
-        <result name="input">/empresas/cadEmpresa_b.jsp</result>
-    </action>
-</package>
+        <action name="editar" class="br.com.soc.sistema.action.EmpresaAction" method="editar">
+            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        </action>
+        
+        <action name="excluir" class="br.com.soc.sistema.action.EmpresaAction" method="excluir">
+            <result name="success" type="redirectAction">todasEmpresas</result>
+            <result name="input">/empresas/cadEmpresa_b.jsp</result>
+        </action>
+    </package>
 </struts>
