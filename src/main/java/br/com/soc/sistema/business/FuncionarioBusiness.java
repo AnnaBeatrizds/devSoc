@@ -3,6 +3,7 @@ package br.com.soc.sistema.business;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.soc.sistema.dao.CompromissoDao;
 import br.com.soc.sistema.dao.FuncionarioDao;
 import br.com.soc.sistema.exception.BusinessException;
 import br.com.soc.sistema.filter.FuncionarioFilter;
@@ -15,9 +16,11 @@ public class FuncionarioBusiness {
     private static final String ERRO_ALTERACAO = "Nao foi possivel realizar a alteracao do registro";
 
 	private FuncionarioDao dao;
-	
+	private CompromissoDao compromissoDao;
+
 	public FuncionarioBusiness() {
 		this.dao = new FuncionarioDao();
+		this.compromissoDao = new CompromissoDao();
 	}
 	
 	public List<FuncionarioVo> trazerTodosOsFuncionarios(){
@@ -26,7 +29,7 @@ public class FuncionarioBusiness {
 	
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
 		try {
-			if(funcionarioVo.getNome().isEmpty())
+			if(funcionarioVo.getNmFuncionario().isEmpty())
 				throw new IllegalArgumentException(NOME_VAZIO);
 			
 			dao.insertFuncionario(funcionarioVo);
@@ -41,8 +44,11 @@ public class FuncionarioBusiness {
 		switch (filter.getOpcoesCombo()) {
 			case ID:
 				try {
-					Integer codigo = Integer.parseInt(filter.getValorBusca());
-					funcionarios.add(dao.findByCodigo(codigo));
+					Long codigo = Long.parseLong(filter.getValorBusca());
+					FuncionarioVo funcionario = dao.findByCodigo(codigo);
+					if (funcionario != null) {
+						funcionarios.add(funcionario);
+					}
 				}catch (NumberFormatException e) {
 					throw new BusinessException(ERRO_CARACTER_NUMERO);
 				}
@@ -56,28 +62,23 @@ public class FuncionarioBusiness {
 		return funcionarios;
 	}
 	
-	public FuncionarioVo buscarFuncionarioPor(String codigo) {
-		try {
-			Integer cod = Integer.parseInt(codigo);
-			return dao.findByCodigo(cod);
-		}catch (NumberFormatException e) {
-			throw new BusinessException(ERRO_CARACTER_NUMERO);
-		}
+	public FuncionarioVo buscarFuncionarioPor(Long codigo) {
+		return dao.findByCodigo(codigo);
 	}
 	
-	public void excluirFuncionario(String rowid) throws Exception {
-	    //compromissoBusiness.excluirCompromissosPorFuncionario(rowid);
-
+	public void excluirFuncionario(Long rowid) {
+	    compromissoDao.excluirPorFuncionarioId(rowid);
 	    dao.excluir(rowid);
 	}
-	public void alterarFuncionario(FuncionarioVo funcionarioVo) throws Exception {
+
+	public void alterarFuncionario(FuncionarioVo funcionarioVo) {
 	    try {
-	        if(funcionarioVo.getNome().isEmpty()) {
+	        if(funcionarioVo.getNmFuncionario().isEmpty()) {
 	            throw new IllegalArgumentException(NOME_VAZIO);
 	        }
 	        dao.atualizarFuncionario(funcionarioVo);
 	    } catch (Exception e) {
-	        throw new Exception(ERRO_ALTERACAO);
+	        throw new RuntimeException(ERRO_ALTERACAO, e);
 	    }
 	}
 }

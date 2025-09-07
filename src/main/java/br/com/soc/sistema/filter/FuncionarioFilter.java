@@ -20,7 +20,9 @@ public class FuncionarioFilter {
 	}
 
 	public FuncionarioFilter setOpcoesCombo(String codigo) {
-		this.opcoesCombo = OpcoesComboBuscar.buscarPor(codigo);
+		if (codigo != null && !codigo.isEmpty()) {
+			this.opcoesCombo = OpcoesComboBuscar.buscarPor(codigo);
+		}
 		return this;
 	}	
 	

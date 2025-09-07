@@ -1,31 +1,34 @@
 package br.com.soc.sistema.vo;
 
 public class FuncionarioVo {
-	private String rowid;
-	private String nome;	
+	private Long rowid;
+	private String nmFuncionario;	
 	
 	public FuncionarioVo() {}
 		
-	public FuncionarioVo(String rowid, String nome) {
+	public FuncionarioVo(Long rowid, String nmFuncionario) {
 		this.rowid = rowid;
-		this.nome = nome;
+		this.nmFuncionario = nmFuncionario;
 	}
 
-	public String getRowid() {
+	public Long getRowid() {
 		return rowid;
 	}
-	public void setRowid(String rowid) {
+    
+	public void setRowid(Long rowid) {
 		this.rowid = rowid;
 	}
-	public String getNome() {
-		return nome;
+    
+	public String getNmFuncionario() {
+		return nmFuncionario;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
+    
+	public void setNmFuncionario(String nmFuncionario) {
+		this.nmFuncionario = nmFuncionario;
 	}
 	
 	@Override
 	public String toString() {
-		return "FuncionarioVo [rowid=" + rowid + ", nome=" + nome + "]";
+		return "FuncionarioVo [rowid=" + rowid + ", nmFuncionario=" + nmFuncionario + "]";
 	}
 }

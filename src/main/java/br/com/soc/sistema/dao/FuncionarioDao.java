@@ -18,8 +18,7 @@ public class FuncionarioDao extends Dao {
 			Connection con = getConexao();
 			PreparedStatement  ps = con.prepareStatement(query.toString())){
 			
-			int i=1;
-			ps.setString(i++, funcionarioVo.getNome());
+			ps.setString(1, funcionarioVo.getNmFuncionario());
 			ps.executeUpdate();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -27,48 +26,41 @@ public class FuncionarioDao extends Dao {
 	}
 	
 	public List<FuncionarioVo> findAllFuncionarios(){
-		StringBuilder query = new StringBuilder("SELECT rowid id, nm_funcionario nome FROM funcionario");
+		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario");
 		try(
 			Connection con = getConexao();
 			PreparedStatement  ps = con.prepareStatement(query.toString());
 			ResultSet rs = ps.executeQuery()){
 			
-			FuncionarioVo vo =  null;
 			List<FuncionarioVo> funcionarios = new ArrayList<>();
 			while (rs.next()) {
-				vo = new FuncionarioVo();
-				vo.setRowid(rs.getString("id"));
-				vo.setNome(rs.getString("nome"));	
-				
+				FuncionarioVo vo = new FuncionarioVo();
+				vo.setRowid(rs.getLong("rowid"));
+				vo.setNmFuncionario(rs.getString("nm_funcionario"));	
 				funcionarios.add(vo);
 			}
 			return funcionarios;
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return Collections.emptyList();
 	}
 	
 	public List<FuncionarioVo> findAllByNome(String nome){
-		StringBuilder query = new StringBuilder("SELECT rowid id, nm_funcionario nome FROM funcionario ")
+		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario ")
 								.append("WHERE lower(nm_funcionario) like lower(?)");
 		
 		try(Connection con = getConexao();
 			PreparedStatement ps = con.prepareStatement(query.toString())){
-			int i = 1;
 			
-			ps.setString(i, "%"+nome+"%");
+			ps.setString(1, "%"+nome+"%");
 			
 			try(ResultSet rs = ps.executeQuery()){
-				FuncionarioVo vo =  null;
 				List<FuncionarioVo> funcionarios = new ArrayList<>();
-				
 				while (rs.next()) {
-					vo = new FuncionarioVo();
-					vo.setRowid(rs.getString("id"));
-					vo.setNome(rs.getString("nome"));	
-					
+					FuncionarioVo vo = new FuncionarioVo();
+					vo.setRowid(rs.getLong("rowid"));
+					vo.setNmFuncionario(rs.getString("nm_funcionario"));	
 					funcionarios.add(vo);
 				}
 				return funcionarios;
@@ -79,23 +71,21 @@ public class FuncionarioDao extends Dao {
 		return Collections.emptyList();
 	}
 	
-	public FuncionarioVo findByCodigo(Integer codigo){
-		StringBuilder query = new StringBuilder("SELECT rowid id, nm_funcionario nome FROM funcionario ")
+	public FuncionarioVo findByCodigo(Long codigo){
+		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario ")
 								.append("WHERE rowid = ?");
 		
 		try(Connection con = getConexao();
 			PreparedStatement ps = con.prepareStatement(query.toString())){
-			int i = 1;
 			
-			ps.setInt(i, codigo);
+			ps.setLong(1, codigo);
 			
 			try(ResultSet rs = ps.executeQuery()){
 				FuncionarioVo vo =  null;
-				
-				while (rs.next()) {
+				if (rs.next()) {
 					vo = new FuncionarioVo();
-					vo.setRowid(rs.getString("id"));
-					vo.setNome(rs.getString("nome"));	
+					vo.setRowid(rs.getLong("rowid"));
+					vo.setNmFuncionario(rs.getString("nm_funcionario"));	
 				}
 				return vo;
 			}
@@ -105,34 +95,29 @@ public class FuncionarioDao extends Dao {
 		return null;
 	}
 	
-	public void excluir(String rowid) throws SQLException {
+	public void excluir(Long rowid) {
 	    StringBuilder query = new StringBuilder("DELETE FROM funcionario WHERE rowid = ?");
-
-	    try (
-	        Connection con = getConexao();
-	        PreparedStatement ps = con.prepareStatement(query.toString())) {
-
-	        ps.setInt(1, Integer.parseInt(rowid));
+	    try (Connection con = getConexao();
+	         PreparedStatement ps = con.prepareStatement(query.toString())) {
+	        ps.setLong(1, rowid);
 	        ps.executeUpdate();
-
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        throw new RuntimeException("Erro ao excluir funcionário", e);
 	    }
 	}
 	
-	public void atualizarFuncionario(FuncionarioVo funcionarioVo) throws SQLException {
+	public void atualizarFuncionario(FuncionarioVo funcionarioVo) {
 	    StringBuilder query = new StringBuilder("UPDATE funcionario SET nm_funcionario = ? WHERE rowid = ?");
 
-	    try (
-	        Connection con = getConexao();
-	        PreparedStatement ps = con.prepareStatement(query.toString())) {
+	    try (Connection con = getConexao();
+	         PreparedStatement ps = con.prepareStatement(query.toString())) {
 
-	        ps.setString(1, funcionarioVo.getNome());
-	        ps.setInt(2, Integer.parseInt(funcionarioVo.getRowid()));
+	        ps.setString(1, funcionarioVo.getNmFuncionario());
+	        ps.setLong(2, funcionarioVo.getRowid());
 	        ps.executeUpdate();
 
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        throw new RuntimeException("Erro ao atualizar funcionário", e);
 	    }
 	}
 }

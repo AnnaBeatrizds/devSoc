@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.soc.sistema.business.FuncionarioBusiness;
+import br.com.soc.sistema.exception.BusinessException;
 import br.com.soc.sistema.filter.FuncionarioFilter;
 import br.com.soc.sistema.infra.Action;
 import br.com.soc.sistema.infra.OpcoesComboBuscar;
@@ -20,66 +21,75 @@ public class FuncionarioAction extends Action {
 	
 	public String todos() {
 		funcionarios.addAll(business.trazerTodosOsFuncionarios());	
-
 		return SUCCESS;
 	}
 	
 	public String filtrar() {
-		if(filtrar.isNullOpcoesCombo())
-			return REDIRECT;
-		
-		funcionarios = business.filtrarFuncionarios(filtrar);
-		
-		return SUCCESS;
+		try {
+			if(filtrar.isNullOpcoesCombo())
+				return REDIRECT;
+			
+			funcionarios = business.filtrarFuncionarios(filtrar);
+			return SUCCESS;
+		} catch (BusinessException e) {
+			addActionError(e.getMessage());
+			funcionarios.addAll(business.trazerTodosOsFuncionarios());
+			return ERROR;
+		}
 	}
 	
 	public String novo() {
-		if(funcionarioVo.getNome() == null)
+		if(funcionarioVo.getNmFuncionario() == null)
 			return INPUT;
 		
 		business.salvarFuncionario(funcionarioVo);
-		
 		return REDIRECT;
 	}
+
 	public void validateNovo() {
-	    if (funcionarioVo.getNome() == null || funcionarioVo.getNome().trim().isEmpty()) {
-	        addFieldError("funcionarioVo.nome", "O nome do funcionário não pode ser vazio.");
+	    if (funcionarioVo.getNmFuncionario() == null || funcionarioVo.getNmFuncionario().trim().isEmpty()) {
+	        addFieldError("funcionarioVo.nmFuncionario", "O nome do funcionário não pode ser vazio.");
 	    }
 	}
+
 	public String editar() {
 		if(funcionarioVo.getRowid() == null)
 			return REDIRECT;
 		
 		funcionarioVo = business.buscarFuncionarioPor(funcionarioVo.getRowid());
-		
 		return INPUT;
 	}
+
 	public String alterar() {
 	    try {
-	 
 	        business.alterarFuncionario(funcionarioVo);
-	        return "redirect";
-
+	        return REDIRECT;
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return "input";
+	        return INPUT;
 	    }
 	}
+
 	public String excluir() {
 	    try {
-	        System.out.println("Recebendo ID para exclusão: " + this.rowid);
-	        
-	        business.excluirFuncionario(this.rowid);
-	        return "success";
-
-	    } catch (Exception e) {
+	        business.excluirFuncionario(Long.parseLong(this.rowid));
+	        addActionMessage("Funcionário excluído com sucesso!");
+	        return REDIRECT;
+	    } catch (NumberFormatException e) {
+			addActionError("Código de funcionário inválido.");
+			e.printStackTrace();
+			return ERROR;
+		} catch (Exception e) {
+	        addActionError("Não foi possível excluir o funcionário. Verifique se ele não possui compromissos agendados.");
 	        e.printStackTrace();
-	        return "error";
+	        return ERROR;
 	    }
 	}
+
 	public void setRowid(String rowid) {
 	    this.rowid = rowid;
 	}
+
 	public List<OpcoesComboBuscar> getListaOpcoesCombo(){
 		return Arrays.asList(OpcoesComboBuscar.values());
 	}

@@ -13,7 +13,7 @@ public class ExameDao extends Dao {
 
     public List<ExameVo> listarTodosExames() {
         List<ExameVo> exames = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT id, nome_exame FROM exames");
+        StringBuilder sql = new StringBuilder("SELECT id, nm_exame FROM exame");
 
         try (Connection con = getConexao();
              PreparedStatement ps = con.prepareStatement(sql.toString());
@@ -22,74 +22,68 @@ public class ExameDao extends Dao {
             while (rs.next()) {
                 ExameVo vo = new ExameVo();
                 vo.setId(rs.getInt("id"));
-                vo.setNomeExame(rs.getString("nome_exame"));
+                vo.setNmExame(rs.getString("nm_exame"));
                 exames.add(vo);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return exames;
     }
 
-    public void associarExamesEmpresa(int codigoEmpresa, List<Integer> examesIds) {
-        StringBuilder sql = new StringBuilder("INSERT INTO empresas_exames (empresa_codigo, exame_id) VALUES (?, ?)");
+    public void associarExamesAgenda(Integer codigoAgenda, List<Integer> examesIds) {
+        StringBuilder sql = new StringBuilder("INSERT INTO agenda_exames (agenda_codigo, exame_id) VALUES (?, ?)");
 
         try (Connection con = getConexao();
              PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
             for (Integer exameId : examesIds) {
-                ps.setInt(1, codigoEmpresa);
+                ps.setInt(1, codigoAgenda);
                 ps.setInt(2, exameId);
                 ps.addBatch();
             }
             ps.executeBatch();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void removerExamesDaEmpresa(int codigoEmpresa) {
-        StringBuilder sql = new StringBuilder("DELETE FROM empresas_exames WHERE empresa_codigo = ?");
+    public void removerExamesDaAgenda(Integer codigoAgenda) {
+        StringBuilder sql = new StringBuilder("DELETE FROM agenda_exames WHERE agenda_codigo = ?");
 
         try (Connection con = getConexao();
              PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            ps.setInt(1, codigoEmpresa);
+            ps.setInt(1, codigoAgenda);
             ps.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public List<ExameVo> listarExamesPorEmpresa(int codigoEmpresa) {
+    public List<ExameVo> listarExamesPorAgenda(Integer codigoAgenda) {
         List<ExameVo> exames = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-            "SELECT e.id, e.nome_exame FROM exames e " +
-            "JOIN empresas_exames ee ON e.id = ee.exame_id " +
-            "WHERE ee.empresa_codigo = ?"
+            "SELECT e.id, e.nm_exame FROM exame e " +
+            "JOIN agenda_exames ae ON e.id = ae.exame_id " +
+            "WHERE ae.agenda_codigo = ?"
         );
 
         try (Connection con = getConexao();
              PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            ps.setInt(1, codigoEmpresa);
+            ps.setInt(1, codigoAgenda);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ExameVo vo = new ExameVo();
                     vo.setId(rs.getInt("id"));
-                    vo.setNomeExame(rs.getString("nome_exame"));
+                    vo.setNmExame(rs.getString("nm_exame"));
                     exames.add(vo);
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return exames;
     }
 }

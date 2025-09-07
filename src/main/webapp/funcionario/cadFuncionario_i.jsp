@@ -11,7 +11,7 @@
 
 		<div class="container">
 			<s:url action="%{funcionarioVo.rowid != null ? 'alterarFuncionarios' : 'novoFuncionarios'}" var="formAction"/>
-			<s:form action="%{formAction}">
+			<s:form id="formFuncionario" action="%{formAction}">
 
 				<div class="card mt-5">
 					<div class="card-header">
@@ -33,6 +33,12 @@
 					</div>
 					
 					<div class="card-body">
+						<s:if test="hasFieldErrors()">
+							<div class="alert alert-danger">
+								<s:fielderror />
+							</div>
+						</s:if>
+					
 						<div class="row align-items-center">
 							<label for="id" class="col-sm-1 col-form-label text-center">
     							<s:text name="label.codigo"/>
@@ -49,9 +55,8 @@
     							<s:text name="label.nome"/>
 							</label>
 	
-
 							<div class="col-sm-5">
-								<s:textfield cssClass="form-control" id="nome" name="funcionarioVo.nome" required="true"/>							
+								<s:textfield cssClass="form-control" id="nome" name="funcionarioVo.nmFuncionario" required="true"/>							
 							</div>	
 						</div>
 					</div>
@@ -59,7 +64,7 @@
 					<div class="card-footer">
 						<div class="form-row">
 							<s:submit value="%{getText('label.salvar')}" cssClass="btn btn-primary col-sm-4 offset-sm-1"/>
-							<button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2" onclick="limparFormulario()"><s:text name="label.limparFormulario"/></button>
+							<button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2"><s:text name="label.limparFormulario"/></button>
 						</div>
 					</div>
 				</div>
@@ -67,10 +72,5 @@
 		</div>
 		
 		<script src="webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-		        <script>
-            function limparFormulario() {
-                document.getElementById("formFuncionario").reset();
-            }
-        </script>	
 	</body>
 </html>

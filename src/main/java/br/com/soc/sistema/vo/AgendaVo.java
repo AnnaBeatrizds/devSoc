@@ -2,21 +2,14 @@ package br.com.soc.sistema.vo;
 
 import java.util.List;
 
-public class EmpresaVo {
+public class AgendaVo {
     private Integer codigo;
-    private String nome;
+    private String nmAgenda;
     private String periodo;
     private List<Integer> examesIds;
+    private List<ExameVo> exames; 
 
-    public EmpresaVo() {}
-
-    public EmpresaVo(Integer codigo, String nome, String periodo, List<Integer> examesIds) {
-        super();
-        this.codigo = codigo;
-        this.nome = nome;
-        this.periodo = periodo;
-        this.examesIds = examesIds;
-    }
+    public AgendaVo() {}
 
     public Integer getCodigo() {
         return codigo;
@@ -26,12 +19,12 @@ public class EmpresaVo {
         this.codigo = codigo;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNmAgenda() {
+        return nmAgenda;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNmAgenda(String nmAgenda) {
+        this.nmAgenda = nmAgenda;
     }
 
     public String getPeriodo() {
@@ -50,8 +43,17 @@ public class EmpresaVo {
         this.examesIds = examesIds;
     }
 
+    public List<ExameVo> getExames() {
+        return exames;
+    }
+
+    public void setExames(List<ExameVo> exames) {
+        this.exames = exames;
+    }
+
     @Override
     public String toString() {
-        return "EmpresaVo [codigo=" + codigo + ", nome=" + nome + ", periodo=" + periodo + ", examesIds=" + examesIds + "]";
+        return "AgendaVo [codigo=" + codigo + ", nmAgenda=" + nmAgenda + ", periodo=" + periodo + ", examesIds="
+                + examesIds + ", exames=" + exames + "]";
     }
 }

@@ -2,7 +2,7 @@ package br.com.soc.sistema.filter;
 
 import br.com.soc.sistema.infra.OpcoesComboBuscar;
 
-public class EmpresaFilter {
+public class AgendaFilter {
 	private OpcoesComboBuscar opcoesCombo;
 	private String valorBusca;
 
@@ -10,7 +10,7 @@ public class EmpresaFilter {
 		return valorBusca;
 	}
 
-	public EmpresaFilter setValorBusca(String valorBusca) {
+	public AgendaFilter setValorBusca(String valorBusca) {
 		this.valorBusca = valorBusca;
 		return this;
 	}
@@ -19,8 +19,10 @@ public class EmpresaFilter {
 		return opcoesCombo;
 	}
 
-	public EmpresaFilter setOpcoesCombo(String codigo) {
-		this.opcoesCombo = OpcoesComboBuscar.buscarPor(codigo);
+	public AgendaFilter setOpcoesCombo(String codigo) {
+		if (codigo != null && !codigo.isEmpty()) {
+			this.opcoesCombo = OpcoesComboBuscar.buscarPor(codigo);
+		}
 		return this;
 	}	
 	
@@ -28,7 +30,7 @@ public class EmpresaFilter {
 		return this.getOpcoesCombo() == null;
 	}
 	
-	public static EmpresaFilter builder() {
-		return new EmpresaFilter();
+	public static AgendaFilter builder() {
+		return new AgendaFilter();
 	}
 }

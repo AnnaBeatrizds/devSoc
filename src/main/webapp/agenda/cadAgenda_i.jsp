@@ -4,114 +4,83 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title><s:text name="label.titulo.pagina.cadastroEmpresa"/></title>
-
+    <title>Cadastro de Agenda</title>
     <s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
     <link rel="stylesheet" href="${bootstrap_css}">
 </head>
 <body class="bg-secondary">
-
 <div class="container">
-    <s:form action="salvar" id="formEmpresa">
-        <s:hidden name="empresaVo.codigo"/>
-
+    <s:form action="salvarAgenda" id="formAgenda">
+        <s:hidden name="agendaVo.codigo"/>
         <div class="card mt-5">
             <div class="card-header">
                 <div class="row">
-         
                    <div class="col-sm-5">
-                        <s:url action="todasEmpresas" var="todas"/>
-                        <a href="${todas}" class="btn btn-success"><s:text name="label.empresas"/></a>
+                        <s:url action="todasAgendas" var="todas"/>
+                        <a href="${todas}" class="btn btn-success">Ver Agendas</a>
                     </div>
-
-             
                    <div class="col-sm">
-                        <s:if test="empresaVo.codigo != null">
-                            <h5 class="card-title"><s:text name="label.editarEmpresa"/></h5>
+                        <s:if test="agendaVo.codigo != null">
+                            <h5 class="card-title">Editar Agenda</h5>
                         </s:if>
-           
                          <s:else>
-                            <h5 class="card-title"><s:text name="label.novaEmpresa"/></h5>
+                            <h5 class="card-title">Nova Agenda</h5>
                         </s:else>
                     </div>
-             
                </div>
             </div>
-
             <div class="card-body">
                 <div class="row align-items-center">
                     <label for="id" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.codigo"/>
-     
                     </label>
                     <div class="col-sm-2">
-                        <s:textfield cssClass="form-control" id="id" value="%{empresaVo.codigo}" readonly="true"/>
+                        <s:textfield cssClass="form-control" id="id" value="%{agendaVo.codigo}" readonly="true"/>
                     </div>
-                
                 </div>
-
                 <div class="row align-items-center mt-3">
-                    <label for="nomeEmpresa" class="col-sm-1 col-form-label text-center">
-                        <s:text name="label.nomeEmpresa"/>
+                    <label for="nomeAgenda" class="col-sm-1 col-form-label text-center">
+                        Nome
                     </label>
-            
                     <div class="col-sm-5">
-                        <s:textfield cssClass="form-control" id="nomeEmpresa" name="empresaVo.nome" required="true"/>
+                        <s:textfield cssClass="form-control" id="nomeAgenda" name="agendaVo.nmAgenda" required="true"/>
                     </div>
                 </div>
-
                 <div class="row align-items-center mt-3">
-        
                      <label for="periodo" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.periodoDisponivel"/>
                     </label>
                     <div class="col-sm-5">
-                  
                       <s:select cssClass="form-control"
                                   list="#{'Manhã':'Manhã', 'Tarde':'Tarde', 'Ambos':'Ambos'}"
-                                  name="empresaVo.periodo"
+                                  name="agendaVo.periodo"
                                   required="true"
-                                  value="%{empresaVo.periodo}"/>
+                                  value="%{agendaVo.periodo}"/>
                     </div>
                 </div>
-
                 <div class="row align-items-center mt-3">
                     <label for="exames" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.exames"/>
                     </label>
                     <div class="col-sm-5">
-          
-                      <s:checkboxlist name="empresaVo.examesIds"
+                      <s:checkboxlist name="agendaVo.examesIds"
                                         list="listaTodosExames"
                                         listKey="id"
-                                        listValue="nomeExame"
-                                        value="%{empresaVo.examesIds}"/>
+                                        listValue="nmExame"
+                                        value="%{agendaVo.examesIds}"/>
                     </div>
-     
-                   </div>
+                </div>
             </div>
-
             <div class="card-footer">
                 <div class="form-row">
                     <s:submit value="%{getText('label.salvar')}" cssClass="btn btn-primary col-sm-4 offset-sm-1"/>
-                    <button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2" onclick="limparFormulario()">
-                        <s:text name="label.limparFormulario"/>
-                    </button>
+                    <button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2">Limpar</button>
                 </div>
             </div>
         </div>
     </s:form>
 </div>
-
 <s:url value="/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js" var="bootstrap_js"/>
 <script src="${bootstrap_js}"></script>
-
-<script>
-    function limparFormulario() {
-  
-          document.getElementById("formEmpresa").reset();
-    }
-</script>
-
 </body>
 </html>

@@ -16,34 +16,78 @@
             <result name="success">/funcionario/cadFuncionario_b.jsp</result>
             <result name="input">/funcionario/cadFuncionario_i.jsp</result>
             <result name="redirect" type="redirectAction">todosFuncionarios</result>
+            <result name="error" type="redirectAction">todosFuncionarios</result>
         </action>
     </package>
 		
-    <package name="Empresa" extends="struts-default">
-        <action name="todasEmpresas" class="br.com.soc.sistema.action.EmpresaAction" method="listar">
-            <result name="success">/empresas/cadEmpresa_b.jsp</result>
+    <package name="Agenda" extends="struts-default, json-default">
+        <action name="todasAgendas" class="br.com.soc.sistema.action.AgendaAction" method="listar">
+            <result name="success">/agenda/cadAgenda_b.jsp</result>
+            <result name="error">/agenda/cadAgenda_b.jsp</result>
         </action>
 
-        <action name="novo" class="br.com.soc.sistema.action.EmpresaAction" method="novo">
-            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        <action name="novaAgenda" class="br.com.soc.sistema.action.AgendaAction" method="novo">
+            <result name="input">/agenda/cadAgenda_i.jsp</result>
         </action>
         
-        <action name="salvar" class="br.com.soc.sistema.action.EmpresaAction" method="salvar">
-            <result name="success" type="redirectAction">todasEmpresas</result>
-            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        <action name="salvarAgenda" class="br.com.soc.sistema.action.AgendaAction" method="salvar">
+            <result name="success" type="redirectAction">todasAgendas</result>
+            <result name="input">/agenda/cadAgenda_i.jsp</result>
         </action>
 
-        <action name="filtrar" class="br.com.soc.sistema.action.EmpresaAction" method="filtrar">
-            <result name="success">/empresas/cadEmpresa_b.jsp</result>
+        <action name="filtrarAgendas" class="br.com.soc.sistema.action.AgendaAction" method="filtrar">
+            <result name="success">/agenda/cadAgenda_b.jsp</result>
+            <result name="error">/agenda/cadAgenda_b.jsp</result>
         </action>
 
-        <action name="editar" class="br.com.soc.sistema.action.EmpresaAction" method="editar">
-            <result name="input">/empresas/cadEmpresa_i.jsp</result>
+        <action name="editarAgendas" class="br.com.soc.sistema.action.AgendaAction" method="editar">
+            <result name="input">/agenda/cadAgenda_i.jsp</result>
         </action>
         
-        <action name="excluir" class="br.com.soc.sistema.action.EmpresaAction" method="excluir">
-            <result name="success" type="redirectAction">todasEmpresas</result>
-            <result name="input">/empresas/cadEmpresa_b.jsp</result>
+        <action name="excluirAgendas" class="br.com.soc.sistema.action.AgendaAction" method="excluir">
+            <result name="success" type="redirectAction">todasAgendas</result>
+            <result name="input">/agenda/cadAgenda_b.jsp</result>
+            <result name="error" type="redirectAction">todasAgendas</result>
+        </action>
+        
+        <action name="buscarDetalhesAgenda" class="br.com.soc.sistema.action.AgendaAction" method="buscarDetalhes">
+            <result name="success" type="json">
+                <param name="root">agendaDetalhe</param>
+            </result>
+            <result name="error" type="httpheader">
+                <param name="status">500</param>
+            </result>
         </action>
     </package>
+
+  <package name="Compromisso" extends="struts-default, json-default" strict-method-invocation="false">
+    
+        <action name="novoCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="agendar">
+            <result name="input">/compromissos/agendamento.jsp</result>
+        </action>
+
+        <action name="buscarDatasOcupadas" class="br.com.soc.sistema.action.CompromissoAction" method="buscarDatasOcupadas">
+            <result name="success" type="json">
+                <param name="root">datasOcupadas</param>
+            </result>
+            <result name="error" type="httpheader">
+                <param name="status">500</param>
+            </result>
+        </action>
+
+        <action name="visualizarHorarios" class="br.com.soc.sistema.action.CompromissoAction" method="visualizarHorarios">
+            <result name="success">/compromissos/confirmacaoCompromisso.jsp</result>
+            <result name="input">/compromissos/agendamento.jsp</result>
+            <result name="error" type="redirectAction">novoCompromisso</result>
+        </action>
+
+        <action name="salvarCompromissoAjax" class="br.com.soc.sistema.action.CompromissoAction" method="salvarCompromissoAjax">
+            <result name="success" type="json"/>
+            <result name="error" type="httpheader">
+                <param name="status">500</param>
+            </result>
+        </action>
+
+    </package>
+
 </struts>

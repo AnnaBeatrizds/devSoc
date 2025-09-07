@@ -2,13 +2,13 @@ package br.com.soc.sistema.vo;
 
 public class ExameVo {
 	private Integer id;
-	private String nomeExame;
+	private String nmExame;
 	
 	public ExameVo() {}
 	
-	public ExameVo(Integer id, String nomeExame) {
+	public ExameVo(Integer id, String nmExame) {
 		this.id = id;
-		this.nomeExame = nomeExame;
+		this.nmExame = nmExame;
 	}
 
 	public Integer getId() {
@@ -19,16 +19,16 @@ public class ExameVo {
 		this.id = id;
 	}
 
-	public String getNomeExame() {
-		return nomeExame;
+	public String getNmExame() {
+		return nmExame;
 	}
 
-	public void setNomeExame(String nomeExame) {
-		this.nomeExame = nomeExame;
+	public void setNmExame(String nmExame) {
+		this.nmExame = nmExame;
 	}
 
 	@Override
 	public String toString() {
-		return "ExameVo [id=" + id + ", nomeExame=" + nomeExame + "]";
+		return "ExameVo [id=" + id + ", nmExame=" + nmExame + "]";
 	}
 }
