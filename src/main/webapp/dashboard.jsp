@@ -40,6 +40,10 @@
             <s:url action="novoCompromisso" namespace="/compromisso" var="urlCompromisso"/>
             <a href="${urlCompromisso}" class="nav-link text-white">Novo Agendamento</a>
         </li>
+        <li>
+            <s:url action="relatorioCompromissos" namespace="/compromisso" var="relatorioUrl"/>
+            <a href="${relatorioUrl}" class="nav-link text-white">Relatório</a>
+        </li>
     </ul>
 </div>
 

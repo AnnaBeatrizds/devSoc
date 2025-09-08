@@ -108,7 +108,28 @@
         <result name="success">/compromissos/listaCompromissos.jsp</result>
         <result name="error">/compromissos/listaCompromissos.jsp</result>
     </action>
+    
+     <action name="relatorioCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="relatorio">
+        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+    </action>
 
+    <action name="gerarRelatorioHTML" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioHTML">
+        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+        <result name="error">/compromissos/relatorioCompromissos.jsp</result>
+        <result name="input">/compromissos/relatorioCompromissos.jsp</result>
+    </action>
+
+    <action name="gerarRelatorioExcel" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioExcel">
+        <result name="success" type="stream">
+            <param name="contentType">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
+            <param name="inputName">inputStream</param>
+            <param name="contentDisposition">attachment;filename="${fileName}"</param>
+            <param name="bufferSize">1024</param>
+        </result>
+        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+        <result name="error">/compromissos/relatorioCompromissos.jsp</result>
+        <result name="input">/compromissos/relatorioCompromissos.jsp</result>
+    </action>
 </package>
 <package name="dashboard" namespace="/" extends="struts-default">
     <action name="">

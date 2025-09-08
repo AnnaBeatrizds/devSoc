@@ -144,4 +144,7 @@ public class CompromissoBusiness {
         }
         return dao.buscarExamesIdsPorCompromisso(codigoCompromisso);
     }
+    public List<CompromissoVo> filtrarCompromissosPorPeriodo(java.util.Date dataInicial, java.util.Date dataFinal) {
+        return dao.filtrarCompromissosPorPeriodo(dataInicial, dataFinal);
+    }
 }

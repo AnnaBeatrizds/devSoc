@@ -384,4 +384,40 @@ public class CompromissoDao extends Dao {
         }
         return examesIds;
     }
+    public List<CompromissoVo> filtrarCompromissosPorPeriodo(java.util.Date dataInicial, java.util.Date dataFinal) {
+        List<CompromissoVo> compromissos = new ArrayList<>();
+        StringBuilder query = new StringBuilder()
+            .append("SELECT c.codigo, c.data_compromisso, c.hora_compromisso, ")
+            .append("f.rowid as id_funcionario, f.nm_funcionario, a.codigo as id_agenda, a.nm_agenda ")
+            .append("FROM compromisso c ")
+            .append("JOIN funcionario f ON c.id_funcionario = f.rowid ")
+            .append("JOIN agenda a ON c.id_agenda = a.codigo ")
+            .append("WHERE c.data_compromisso BETWEEN ? AND ? ")
+            .append("ORDER BY c.data_compromisso, c.hora_compromisso");
+
+        try (Connection con = getConexao();
+             PreparedStatement ps = con.prepareStatement(query.toString())) {
+            
+            // Converte java.util.Date para java.sql.Date antes de passar para o PreparedStatement
+            ps.setDate(1, new java.sql.Date(dataInicial.getTime()));
+            ps.setDate(2, new java.sql.Date(dataFinal.getTime()));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CompromissoVo vo = new CompromissoVo();
+                    vo.setCodigo(rs.getInt("codigo"));
+                    vo.setDataCompromissoObjeto(rs.getDate("data_compromisso"));
+                    vo.setHoraCompromisso(rs.getString("hora_compromisso"));
+                    vo.setIdFuncionario(rs.getLong("id_funcionario"));
+                    vo.setNomeFuncionario(rs.getString("nm_funcionario"));
+                    vo.setIdAgenda(rs.getInt("id_agenda"));
+                    vo.setNomeAgenda(rs.getString("nm_agenda"));
+                    compromissos.add(vo);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return compromissos;
+    }
 }

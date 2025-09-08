@@ -7,21 +7,36 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
 
 import br.com.soc.sistema.business.AgendaBusiness;
 import br.com.soc.sistema.business.CompromissoBusiness;
 import br.com.soc.sistema.business.FuncionarioBusiness;
 import br.com.soc.sistema.exception.BusinessException;
+import br.com.soc.sistema.filter.CompromissoFilter;
+import br.com.soc.sistema.infra.OpcoesComboBuscar;
 import br.com.soc.sistema.vo.AgendaVo;
 import br.com.soc.sistema.vo.CompromissoVo;
 import br.com.soc.sistema.vo.ExameVo;
 import br.com.soc.sistema.vo.FuncionarioVo;
-import br.com.soc.sistema.filter.CompromissoFilter;
-import br.com.soc.sistema.infra.OpcoesComboBuscar;
 
 public class CompromissoAction extends ActionSupport {
-
+    
     private FuncionarioBusiness funcionarioBusiness = new FuncionarioBusiness();
     private AgendaBusiness agendaBusiness = new AgendaBusiness();
     private CompromissoBusiness compromissoBusiness = new CompromissoBusiness();
@@ -38,6 +53,11 @@ public class CompromissoAction extends ActionSupport {
 
     private List<CompromissoVo> compromissos = new ArrayList<>();
     private CompromissoFilter filter = new CompromissoFilter();
+    
+    private Date dataInicial;
+    private Date dataFinal;
+    private InputStream inputStream;
+    private String fileName;
 
     public String editar() {
         try {
@@ -199,6 +219,85 @@ public class CompromissoAction extends ActionSupport {
         }
         return Collections.emptyList();
     }
+    public String relatorio() {
+        return "relatorio";
+    }
+
+    public String gerarRelatorioHTML() {
+        try {
+            if (dataInicial == null || dataFinal == null) {
+                addActionError("As datas de início e fim são obrigatórias.");
+                return "relatorio";
+            }
+            compromissos = compromissoBusiness.filtrarCompromissosPorPeriodo(dataInicial, dataFinal);
+            return "relatorio";
+        } catch (Exception e) {
+            e.printStackTrace();
+            addActionError("Erro ao gerar o relatório HTML.");
+            return "relatorio";
+        }
+    }
+
+ 
+    public String gerarRelatorioExcel() {
+        try {
+            if (dataInicial == null || dataFinal == null) {
+                addActionError("As datas de início e fim são obrigatórias.");
+                return "relatorio";
+            }
+
+            compromissos = compromissoBusiness.filtrarCompromissosPorPeriodo(dataInicial, dataFinal);
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Relatório de Compromissos");
+
+            int rowNum = 0;
+            XSSFRow headerRow = sheet.createRow(rowNum++);
+            headerRow.createCell(0).setCellValue("Código Funcionário");
+            headerRow.createCell(1).setCellValue("Nome Funcionário");
+            headerRow.createCell(2).setCellValue("Código Agenda");
+            headerRow.createCell(3).setCellValue("Nome Agenda");
+            headerRow.createCell(4).setCellValue("Data Compromisso");
+            headerRow.createCell(5).setCellValue("Hora Compromisso");
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+            for (CompromissoVo compromisso : compromissos) {
+                XSSFRow row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(compromisso.getIdFuncionario());
+                row.createCell(1).setCellValue(compromisso.getNomeFuncionario());
+                row.createCell(2).setCellValue(compromisso.getIdAgenda());
+                row.createCell(3).setCellValue(compromisso.getNomeAgenda());
+                row.createCell(4).setCellValue(sdf.format(compromisso.getDataCompromissoObjeto()));
+                row.createCell(5).setCellValue(compromisso.getHoraCompromisso());
+            }
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try {
+                workbook.write(bos);
+            } finally {
+                bos.close();
+                workbook.close();
+            }
+
+            byte[] bytes = bos.toByteArray();
+            inputStream = new ByteArrayInputStream(bytes);
+            fileName = "relatorio_compromissos_" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + ".xlsx";
+
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            addActionError("Erro ao gerar o relatório Excel.");
+            return "relatorio";
+        }
+    }
+
+    public Date getDataInicial() { return dataInicial; }
+    public void setDataInicial(Date dataInicial) { this.dataInicial = dataInicial; }
+    public Date getDataFinal() { return dataFinal; }
+    public void setDataFinal(Date dataFinal) { this.dataFinal = dataFinal; }
+    public InputStream getInputStream() { return inputStream; }
+    public String getFileName() { return fileName; }
     
     public List<FuncionarioVo> getFuncionarios() { return funcionarios; }
     public void setFuncionarios(List<FuncionarioVo> f) { this.funcionarios = f; }
