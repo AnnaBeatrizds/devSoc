@@ -19,30 +19,38 @@
                 <s:actionmessage cssClass="alert alert-success mt-3"/>
 
                 <div class="row mb-3">
-                    <div class="col-sm p-0">
-                        <s:form action="filtrarCompromissos" namespace="/compromisso">
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <strong><s:text name="label.buscar.por"/></strong>
-                                </span>	
-                                <s:select  
-                                    cssClass="form-select" 
-                                    name="filter.opcoesCombo" 
-                                    list="listaOpcoesCombo"  
-                                    headerKey=""  
-                                    headerValue="<s:text name='label.escolha'/>" 
-                                    listKey="%{codigo}" 
-                                    listValueKey="%{descricao}"
-                                    value="filter.opcoesCombo.codigo"									
-                                />
-                                <s:textfield cssClass="form-control" name="filter.valorBusca"/>
-                                <button class="btn btn-primary" type="submit" onclick="return validarBusca()">
-                                    <s:text name="label.pesquisar"/>
-                                </button>
-                            </div>
-                        </s:form>			
-                    </div>
-                </div>
+				    <div class="col-sm p-0">
+				        <s:form action="filtrarCompromissos" namespace="/compromisso">
+				            <div class="input-group">
+				                <span class="input-group-text">
+				                    <strong><s:text name="label.buscar.por.funcionario"/></strong>
+				                </span>	
+				                <s:select  
+				                    cssClass="form-select" 
+				                    name="filter.opcoesCombo" 
+				                    list="listaOpcoesCombo"  
+				                    headerKey=""  
+				                    headerValue="%{getText('label.escolha')}" 
+				                    listKey="%{codigo}" 
+				                    listValueKey="%{descricao}"
+				                    value="filter.opcoesCombo.codigo"									
+				                />
+				                <s:textfield cssClass="form-control" name="filter.valorBusca"/>
+				                <button class="btn btn-primary" type="submit" onclick="return validarBusca()">
+				                    <s:text name="label.pesquisar"/>
+				                </button>
+				            </div>
+				        </s:form>			
+				    </div>
+				    <s:if test="filter.valorBusca != null && !filter.valorBusca.isEmpty()">
+				        <div class="col-sm-auto">
+				            <s:url action="listarCompromissos" var="listarUrl"/>
+				            <a href="${listarUrl}" class="btn btn-secondary">
+				                <s:text name="label.voltar"/>
+				            </a>
+				        </div>
+				    </s:if>
+				</div>
 
                 <table class="table table-light table-striped align-middle">
                     <thead>
@@ -79,9 +87,9 @@
                         <tr>
                             <td colspan="6" class="text-end">
                                 <s:url action="dashboard" namespace="/" var="dashboard"/>
-                                <a href="${dashboard}" class="btn btn-info text-white">
-                                    <s:text name="label.dashboard"/>
-                                </a>
+									<a href="${dashboard}" class="btn btn-info text-white">
+										<s:text name="label.dashboard"/>
+									</a>
                             </td>
                         </tr>
                     </tfoot>

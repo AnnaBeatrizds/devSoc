@@ -17,6 +17,12 @@
                 <h4><s:text name="label.editarCompromisso"/></h4>
             </div>
             <div class="card-body">
+                <s:if test="hasActionErrors()">
+                    <div class="alert alert-danger" role="alert">
+                        <s:actionerror/>
+                    </div>
+                </s:if>
+                
                 <s:form action="salvarCompromisso" id="formCompromisso" theme="simple">
                     <s:hidden name="compromissoVo.codigo" />
                     
@@ -56,25 +62,33 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="dataCompromisso" class="form-label"><s:text name="label.dataCompromisso"/></label>
-                                <s:textfield id="dataCompromisso" name="compromissoVo.dataCompromisso" cssClass="form-control" placeholder="%{getText('label.selecioneData')}"/>
+                                <div class="input-group">
+                                    <s:textfield id="dataCompromisso" name="compromissoVo.dataCompromisso" cssClass="form-control" placeholder="%{getText('label.selecioneData')}"/>
+                                    <s:submit action="recarregarHorariosEdicao" value="Verificar" cssClass="btn btn-outline-secondary"/>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
-                    
+                  
                     <fieldset class="border p-3 mb-3">
                         <legend class="float-none w-auto px-2"><s:text name="label.selecioneHorarioExames"/></legend>
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="horaCompromisso" class="form-label">Hora do Compromisso</label>
-                                <s:select cssClass="form-control"
-                                          name="compromissoVo.horaCompromisso"
-                                          list="todosOsHorarios"
-                                          value="compromissoVo.horaCompromisso"
-                                          headerKey=""
-                                          headerValue="Selecione a hora..."
-                                          id="horaCompromisso"
-                                />
-                            </div>
+                                
+                                <select class="form-control" name="compromissoVo.horaCompromisso" id="horaCompromisso">
+                                    <s:iterator value="todosOsHorarios" var="hora">
+                                        <s:if test="%{#hora in horariosOcupados}">
+                                            <option value="<s:property value='#hora'/>" disabled><s:property value='#hora'/> - Indisponível</option>
+                                        </s:if>
+                                        <s:else>
+                                            <option value="<s:property value='#hora'/>" <s:if test="%{#hora == compromissoVo.horaCompromisso}">selected</s:if>>
+                                                <s:property value='#hora'/>
+                                            </option>
+                                        </s:else>
+                                    </s:iterator>
+                                </select>
+                                </div>
                             <div class="col-md-6">
                                 <label for="examesSelecionados" class="form-label">Exames</label>
                                 <s:checkboxlist name="compromissoVo.examesSelecionados"
@@ -104,40 +118,14 @@
     </div>
     <s:url value="/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js" var="bootstrap_js"/>
     <script src="${bootstrap_js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        const selectAgenda = document.getElementById('selectAgenda');
-        const campoData = document.getElementById('dataCompromisso');
-        let calendarioInstance = null;
-
-        function inicializarCalendario(datasParaDesabilitar) {
-            if (calendarioInstance) {
-                calendarioInstance.destroy();
-            }
-            calendarioInstance = flatpickr("#dataCompromisso", {
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#dataCompromisso", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d/m/Y",
                 placeholder: "Selecione uma data...",
-                disable: datasParaDesabilitar
             });
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            inicializarCalendario([]);
-        });
-        
-        // Lógica para buscar os horários disponíveis ao selecionar a data
-        document.getElementById('dataCompromisso').addEventListener('change', function() {
-             const agendaId = selectAgenda.value;
-             const data = this.value;
-             if (agendaId && data) {
-                 fetch('<s:url action="buscarHorariosOcupados" namespace="/compromisso"/>' + '?idAgenda=' + agendaId + '&data=' + data)
-                    .then(response => response.json())
-                    .then(horariosOcupados => {
-                        // Colocar lógica para desabilitar horários ocupados depois
-                    });
-             }
         });
     </script>
 </body>

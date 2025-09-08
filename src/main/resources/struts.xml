@@ -60,7 +60,7 @@
         </action>
     </package>
 
-  <package name="Compromisso" extends="struts-default, json-default" strict-method-invocation="false" namespace="/compromisso">
+ <package name="Compromisso" extends="struts-default, json-default" strict-method-invocation="false" namespace="/compromisso">
     
     <action name="novoCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="agendar">
         <result name="input">/compromissos/agendamento.jsp</result>
@@ -101,6 +101,10 @@
     <action name="editarCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="editar">
         <result name="input">/compromissos/editarCompromisso.jsp</result>
     </action>
+
+    <action name="recarregarHorariosEdicao" class="br.com.soc.sistema.action.CompromissoAction" method="recarregarHorariosEdicao">
+        <result name="input">/compromissos/editarCompromisso.jsp</result>
+    </action>
     
     <action name="excluirCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="excluir">
         <result name="success" type="redirectAction">listarCompromissos</result>
@@ -113,12 +117,12 @@
     </action>
 
 </package>
- <package name="dashboard" namespace="/" extends="struts-default">
-        <action name="">
-            <result type="redirectAction">dashboard</result>
-        </action>
-        <action name="dashboard" class="br.com.soc.sistema.action.DashboardAction" method="execute">
-            <result name="success">/dashboard.jsp</result>
-        </action>
-    </package>
+<package name="dashboard" namespace="/" extends="struts-default">
+    <action name="">
+        <result type="redirectAction">dashboard</result>
+    </action>
+    <action name="dashboard" class="br.com.soc.sistema.action.DashboardAction" method="execute">
+        <result name="success">/dashboard.jsp</result>
+    </action>
+</package>
 </struts>

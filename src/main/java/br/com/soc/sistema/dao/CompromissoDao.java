@@ -15,56 +15,59 @@ import br.com.soc.sistema.vo.CompromissoVo;
 
 public class CompromissoDao extends Dao {
 
-    public List<CompromissoVo> filtrarCompromissos(CompromissoFilter filtro) {
-        List<CompromissoVo> compromissos = new ArrayList<>();
-        StringBuilder query = new StringBuilder()
-            .append("SELECT c.codigo, c.data_compromisso, c.hora_compromisso, ")
-            .append("f.rowid as id_funcionario, f.nm_funcionario, a.codigo as id_agenda, a.nm_agenda ")
-            .append("FROM compromisso c ")
-            .append("JOIN funcionario f ON c.id_funcionario = f.rowid ")
-            .append("JOIN agenda a ON c.id_agenda = a.codigo ");
+	public List<CompromissoVo> filtrarCompromissos(CompromissoFilter filtro) {
+	    List<CompromissoVo> compromissos = new ArrayList<>();
+	    StringBuilder query = new StringBuilder()
+	        .append("SELECT c.codigo, c.data_compromisso, c.hora_compromisso, ")
+	        .append("f.rowid as id_funcionario, f.nm_funcionario, a.codigo as id_agenda, a.nm_agenda ")
+	        .append("FROM compromisso c ")
+	        .append("JOIN funcionario f ON c.id_funcionario = f.rowid ")
+	        .append("JOIN agenda a ON c.id_agenda = a.codigo ");
 
-        if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
-            switch (filtro.getOpcoesCombo()) {
-                case ID:
-                    query.append("WHERE f.rowid = ? ");
-                    break;
-                case NOME:
-                    query.append("WHERE lower(f.nm_funcionario) like lower(?) ");
-                    break;
-            }
-        }
-        query.append("ORDER BY c.data_compromisso, c.hora_compromisso");
+	    if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
+	        switch (filtro.getOpcoesCombo()) {
+	            case ID:
+	                query.append("WHERE f.rowid = ? ");
+	                break;
+	            case NOME:
+	                query.append("WHERE lower(f.nm_funcionario) like lower(?) ");
+	                break;
+	        }
+	    }
+	    query.append("ORDER BY c.data_compromisso, c.hora_compromisso");
 
-        try (Connection con = getConexao();
-             PreparedStatement ps = con.prepareStatement(query.toString())) {
+	    try (Connection con = getConexao();
+	         PreparedStatement ps = con.prepareStatement(query.toString())) {
 
-            if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
-                 if (filtro.getOpcoesCombo() == OpcoesComboBuscar.NOME) {
-                    ps.setString(1, "%" + filtro.getValorBusca() + "%");
-                } else {
-                    ps.setInt(1, Integer.parseInt(filtro.getValorBusca()));
-                }
-            }
+	        if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
+	             switch (filtro.getOpcoesCombo()) {
+	                case NOME:
+	                    ps.setString(1, "%" + filtro.getValorBusca() + "%");
+	                    break;
+	                case ID:
+	                    ps.setInt(1, Integer.parseInt(filtro.getValorBusca()));
+	                    break;
+	            }
+	        }
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    CompromissoVo vo = new CompromissoVo();
-                    vo.setCodigo(rs.getInt("codigo"));
-                    vo.setDataCompromissoObjeto(rs.getDate("data_compromisso"));
-                    vo.setHoraCompromisso(rs.getString("hora_compromisso"));
-                    vo.setIdFuncionario(rs.getLong("id_funcionario"));
-                    vo.setNomeFuncionario(rs.getString("nm_funcionario"));
-                    vo.setIdAgenda(rs.getInt("id_agenda"));
-                    vo.setNomeAgenda(rs.getString("nm_agenda"));
-                    compromissos.add(vo);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return compromissos;
-    }
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                CompromissoVo vo = new CompromissoVo();
+	                vo.setCodigo(rs.getInt("codigo"));
+	                vo.setDataCompromissoObjeto(rs.getDate("data_compromisso"));
+	                vo.setHoraCompromisso(rs.getString("hora_compromisso"));
+	                vo.setIdFuncionario(rs.getLong("id_funcionario"));
+	                vo.setNomeFuncionario(rs.getString("nm_funcionario"));
+	                vo.setIdAgenda(rs.getInt("id_agenda"));
+	                vo.setNomeAgenda(rs.getString("nm_agenda"));
+	                compromissos.add(vo);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return compromissos;
+	}
     
     public List<CompromissoVo> listarTodosCompromissos() {
         List<CompromissoVo> compromissos = new ArrayList<>();
@@ -302,16 +305,28 @@ public class CompromissoDao extends Dao {
     }
     
     public List<String> buscarHorariosOcupados(Integer idAgenda, java.util.Date data) {
+        return this.buscarHorariosOcupados(idAgenda, data, null);
+    }
+    
+    public List<String> buscarHorariosOcupados(Integer idAgenda, java.util.Date data, Integer codigoCompromissoAExcluir) {
         List<String> horariosOcupados = new ArrayList<>();
         StringBuilder query = new StringBuilder(
             "SELECT hora_compromisso FROM compromisso WHERE id_agenda = ? AND data_compromisso = ?"
         );
         
+        if (codigoCompromissoAExcluir != null) {
+            query.append(" AND codigo != ?");
+        }
+        
         try (Connection con = getConexao();
              PreparedStatement ps = con.prepareStatement(query.toString())) {
             
             ps.setInt(1, idAgenda);
-            ps.setDate(2, new Date(data.getTime()));
+            ps.setDate(2, new java.sql.Date(data.getTime()));
+            
+            if (codigoCompromissoAExcluir != null) {
+                ps.setInt(3, codigoCompromissoAExcluir);
+            }
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -322,5 +337,51 @@ public class CompromissoDao extends Dao {
             e.printStackTrace();
         }
         return horariosOcupados;
+    }
+
+    public int getContagemCompromissos(Integer idAgenda, java.util.Date data, Integer codigoCompromisso) {
+        StringBuilder query = new StringBuilder(
+            "SELECT COUNT(codigo) FROM compromisso WHERE id_agenda = ? AND data_compromisso = ?"
+        );
+        
+        if (codigoCompromisso != null) {
+            query.append(" AND codigo != ?");
+        }
+
+        try (Connection con = getConexao();
+             PreparedStatement ps = con.prepareStatement(query.toString())) {
+
+            ps.setInt(1, idAgenda);
+            ps.setDate(2, new java.sql.Date(data.getTime()));
+            if (codigoCompromisso != null) {
+                ps.setInt(3, codigoCompromisso);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Integer> buscarExamesIdsPorCompromisso(Integer codigoCompromisso) {
+        List<Integer> examesIds = new ArrayList<>();
+        String sql = "SELECT exame_id FROM compromisso_exames WHERE compromisso_codigo = ?";
+        try (Connection con = getConexao();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigoCompromisso);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    examesIds.add(rs.getInt("exame_id"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return examesIds;
     }
 }
