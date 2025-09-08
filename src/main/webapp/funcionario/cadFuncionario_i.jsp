@@ -5,12 +5,13 @@
 	<head>
 		<meta charset="UTF8">
 		<title><s:text name="label.titulo.pagina.cadastro"/></title>
-		<link rel='stylesheet' href='webjars/bootstrap/5.1.3/css/bootstrap.min.css'>
+		<s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
+		<link rel='stylesheet' href='${bootstrap_css}'>
 	</head>
-	<body class="bg-secondary">
+	<body class="bg-light">
 
 		<div class="container">
-			<s:url action="%{funcionarioVo.rowid != null ? 'alterarFuncionarios' : 'novoFuncionarios'}" var="formAction"/>
+			<s:url action="%{funcionarioVo.rowid != null ? 'alterarFuncionarios' : 'salvarFuncionarios'}" var="formAction"/>
 			<s:form id="formFuncionario" action="%{formAction}">
 
 				<div class="card mt-5">
@@ -71,6 +72,7 @@
 			</s:form>			
 		</div>
 		
-		<script src="webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+		<s:url value="/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js" var="bootstrap_js" />
+		<script src="${bootstrap_js}"></script>
 	</body>
 </html>

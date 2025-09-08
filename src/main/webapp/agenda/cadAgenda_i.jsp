@@ -8,26 +8,26 @@
     <s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
     <link rel="stylesheet" href="${bootstrap_css}">
 </head>
-<body class="bg-secondary">
+<body class="bg-light">
 <div class="container">
     <s:form action="salvarAgenda" id="formAgenda">
         <s:hidden name="agendaVo.codigo"/>
         <div class="card mt-5">
             <div class="card-header">
                 <div class="row">
-                   <div class="col-sm-5">
+                    <div class="col-sm-5">
                         <s:url action="todasAgendas" var="todas"/>
-                        <a href="${todas}" class="btn btn-success">Ver Agendas</a>
+                        <a href="${todas}" class="btn btn-success"><s:text name="label.agendas"/></a>
                     </div>
-                   <div class="col-sm">
+                    <div class="col-sm">
                         <s:if test="agendaVo.codigo != null">
-                            <h5 class="card-title">Editar Agenda</h5>
+                            <h5 class="card-title"><s:text name="label.editarAgenda"/></h5>
                         </s:if>
-                         <s:else>
-                            <h5 class="card-title">Nova Agenda</h5>
+                        <s:else>
+                            <h5 class="card-title"><s:text name="label.novaAgenda"/></h5>
                         </s:else>
                     </div>
-               </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row align-items-center">
@@ -40,18 +40,18 @@
                 </div>
                 <div class="row align-items-center mt-3">
                     <label for="nomeAgenda" class="col-sm-1 col-form-label text-center">
-                        Nome
+                        <s:text name="label.nomeAgenda"/>
                     </label>
                     <div class="col-sm-5">
                         <s:textfield cssClass="form-control" id="nomeAgenda" name="agendaVo.nmAgenda" required="true"/>
                     </div>
                 </div>
                 <div class="row align-items-center mt-3">
-                     <label for="periodo" class="col-sm-1 col-form-label text-center">
+                    <label for="periodo" class="col-sm-1 col-form-label text-center">
                         <s:text name="label.periodoDisponivel"/>
                     </label>
                     <div class="col-sm-5">
-                      <s:select cssClass="form-control"
+                        <s:select cssClass="form-control"
                                   list="#{'Manhã':'Manhã', 'Tarde':'Tarde', 'Ambos':'Ambos'}"
                                   name="agendaVo.periodo"
                                   required="true"
@@ -63,7 +63,7 @@
                         <s:text name="label.exames"/>
                     </label>
                     <div class="col-sm-5">
-                      <s:checkboxlist name="agendaVo.examesIds"
+                        <s:checkboxlist name="agendaVo.examesIds"
                                         list="listaTodosExames"
                                         listKey="id"
                                         listValue="nmExame"
@@ -74,7 +74,7 @@
             <div class="card-footer">
                 <div class="form-row">
                     <s:submit value="%{getText('label.salvar')}" cssClass="btn btn-primary col-sm-4 offset-sm-1"/>
-                    <button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2">Limpar</button>
+                    <button type="reset" class="btn btn-secondary col-sm-4 offset-sm-2"><s:text name="label.limparFormulario"/></button>
                 </div>
             </div>
         </div>

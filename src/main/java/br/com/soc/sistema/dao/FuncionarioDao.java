@@ -22,6 +22,7 @@ public class FuncionarioDao extends Dao {
 			ps.executeUpdate();
 		}catch (SQLException e) {
 			e.printStackTrace();
+            throw new RuntimeException("Erro ao inserir funcionário", e);
 		}
 	}
 	

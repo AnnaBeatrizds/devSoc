@@ -16,6 +16,8 @@ import br.com.soc.sistema.vo.AgendaVo;
 import br.com.soc.sistema.vo.CompromissoVo;
 import br.com.soc.sistema.vo.ExameVo;
 import br.com.soc.sistema.vo.FuncionarioVo;
+import br.com.soc.sistema.filter.CompromissoFilter;
+import br.com.soc.sistema.infra.OpcoesComboBuscar;
 
 public class CompromissoAction extends ActionSupport {
 
@@ -33,7 +35,34 @@ public class CompromissoAction extends ActionSupport {
     private List<ExameVo> listaExamesDisponiveis = new ArrayList<>();
     private List<String> todosOsHorarios = new ArrayList<>();
     private List<String> horariosOcupados = new ArrayList<>();
-
+    
+    private List<CompromissoVo> compromissos = new ArrayList<>();
+    private CompromissoFilter filter = new CompromissoFilter();
+    private List<OpcoesComboBuscar> listaOpcoesCombo = new ArrayList<>();
+    
+    public String listar() {
+        compromissos = compromissoBusiness.trazerTodosOsCompromissos();
+        listaOpcoesCombo = OpcoesComboBuscar.getOpcoesComboBuscar();
+        return SUCCESS;
+    }
+    
+    public String filtrar() {
+        try {
+            if (filter.isNullOpcoesCombo()) {
+                return listar();
+            }
+            compromissos = compromissoBusiness.filtrarCompromissos(filter);
+            listaOpcoesCombo = OpcoesComboBuscar.getOpcoesComboBuscar();
+            return SUCCESS;
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+            compromissos = compromissoBusiness.trazerTodosOsCompromissos();
+            listaOpcoesCombo = OpcoesComboBuscar.getOpcoesComboBuscar();
+            return ERROR;
+        }
+    }
+    
+    
     public String agendar() {
         funcionarios = funcionarioBusiness.trazerTodosOsFuncionarios();
         agendas = agendaBusiness.trazerTodasAsAgendas();
@@ -62,8 +91,6 @@ public class CompromissoAction extends ActionSupport {
             }
 
             AgendaVo agenda = agendaBusiness.buscarAgendaPor(compromissoVo.getIdAgenda());
-
-      
             FuncionarioVo funcionario = funcionarioBusiness.buscarFuncionarioPor(compromissoVo.getIdFuncionario());
 
             compromissoVo.setNomeAgenda(agenda.getNmAgenda());
@@ -86,24 +113,47 @@ public class CompromissoAction extends ActionSupport {
         return SUCCESS;
     }
     
-    public String salvarCompromissoAjax() {
+    public String salvar() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date dataConvertida = sdf.parse(compromissoVo.getDataCompromisso());
             compromissoVo.setDataCompromissoObjeto(dataConvertida);
 
-            compromissoBusiness.salvarCompromisso(compromissoVo);
-
-            addActionMessage("Compromisso marcado com sucesso!");
+            if (compromissoVo.getCodigo() != null) {
+                compromissoBusiness.alterarCompromisso(compromissoVo);
+            } else {
+                compromissoBusiness.salvarCompromisso(compromissoVo);
+            }
+            addActionMessage("Compromisso salvo com sucesso!");
             return SUCCESS;
-
         } catch (Exception e) {
             e.printStackTrace();
-            addActionError("Erro ao salvar compromisso.");
+            addActionError("Erro ao salvar compromisso: " + e.getMessage());
+            return INPUT;
+        }
+    }
+    
+    public String excluir() {
+        try {
+            compromissoBusiness.excluirCompromisso(compromissoVo.getCodigo());
+            addActionMessage("Compromisso excluído com sucesso!");
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            addActionError("Erro ao excluir o compromisso.");
             return ERROR;
         }
     }
 
+    public String editar() {
+        compromissoVo = compromissoBusiness.buscarCompromissoPorCodigo(compromissoVo.getCodigo());
+        funcionarios = funcionarioBusiness.trazerTodosOsFuncionarios();
+        agendas = agendaBusiness.trazerTodasAsAgendas();
+        AgendaVo agenda = agendaBusiness.buscarAgendaPor(compromissoVo.getIdAgenda());
+        this.listaExamesDisponiveis = agenda.getExames();
+        this.todosOsHorarios = gerarHorariosParaPeriodo(agenda.getPeriodo());
+        return INPUT;
+    }
 
     private List<String> gerarHorariosParaPeriodo(String periodo) {
         List<String> horariosManha = Arrays.asList("08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30");
@@ -121,22 +171,22 @@ public class CompromissoAction extends ActionSupport {
         return Collections.emptyList();
     }
     
-    public List<FuncionarioVo> getFuncionarios() {
+    public List<FuncionarioVo> getFuncionarios() { 
     	return funcionarios; 
     	}
-    public void setFuncionarios(List<FuncionarioVo> funcionarios) {
+    public void setFuncionarios(List<FuncionarioVo> funcionarios) { 
     	this.funcionarios = funcionarios; 
     	}
     public List<AgendaVo> getAgendas() { 
     	return agendas; 
     	}
-    public void setAgendas(List<AgendaVo> agendas) { 
+    public void setAgendas(List<AgendaVo> agendas) {
     	this.agendas = agendas; 
     	}
-    public CompromissoVo getCompromissoVo() { 
+    public CompromissoVo getCompromissoVo() {
     	return compromissoVo; 
     	}
-    public void setCompromissoVo(CompromissoVo compromissoVo) {
+    public void setCompromissoVo(CompromissoVo compromissoVo) { 
     	this.compromissoVo = compromissoVo; 
     	}
     public Integer getIdAgenda() { 
@@ -148,13 +198,25 @@ public class CompromissoAction extends ActionSupport {
     public List<String> getDatasOcupadas() { 
     	return datasOcupadas; 
     	}
-    public List<ExameVo> getListaExamesDisponiveis() {
-    	return listaExamesDisponiveis; 
+    public List<ExameVo> getListaExamesDisponiveis() { 
+    	return listaExamesDisponiveis;
     	}
-    public List<String> getTodosOsHorarios() { 
+    public List<String> getTodosOsHorarios() {
     	return todosOsHorarios; 
     	}
     public List<String> getHorariosOcupados() { 
     	return horariosOcupados; 
+    	}
+    public List<CompromissoVo> getCompromissos() { 
+    	return compromissos; 
+    	}
+    public List<OpcoesComboBuscar> getListaOpcoesCombo(){ 
+    	return OpcoesComboBuscar.getOpcoesComboBuscar();
+    	}
+    public CompromissoFilter getFilter() { 
+    	return filter;
+    	}
+    public void setFilter(CompromissoFilter filter) {
+    	this.filter = filter; 
     	}
 }

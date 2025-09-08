@@ -8,7 +8,7 @@
 		<s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
 		<link rel='stylesheet' href='${bootstrap_css}'>
 	</head>
-	<body class="bg-secondary">	
+	<body class="bg-light">	
 		<div class="container">
 			<s:actionerror cssClass="alert alert-danger mt-3"/>
 			<s:actionmessage cssClass="alert alert-success mt-3"/>
@@ -21,14 +21,14 @@
 								<strong><s:text name="label.buscar.por"/></strong>
 							</span>	
 								<s:select  
-									cssClass="form-select" 
-									name="filter.opcoesCombo" 
-									list="listaOpcoesCombo"  
-									headerKey=""  
-									headerValue="Escolha..." 
-									listKey="%{codigo}" 
-									listValueKey="%{descricao}"
-									value="filter.opcoesCombo.codigo"									
+								    cssClass="form-select" 
+								    name="filter.opcoesCombo" 
+								    list="listaOpcoesCombo"  
+								    headerKey=""  
+								    headerValue="%{getText('label.escolha')}" 
+								    listKey="%{codigo}" 
+								    listValueKey="%{descricao}"
+								    value="filter.opcoesCombo.codigo"									
 								/>
 								<s:textfield cssClass="form-control" id="nome" name="filter.valorBusca"/>
 								<button class="btn btn-primary" type="submit" onclick="return validarBusca()">
@@ -41,18 +41,18 @@
 					<div class="col-sm p-0">
 						<div class="input-group">
 							<a href="<s:url action='todasAgendas' />" class="btn btn-primary">
-								Voltar
+								<s:text name="label.voltar"/>
 							</a>
 						</div>
 					</div>
 				</s:if>
 			</div>
-			<div class="row">
+			<div class="row border">
 				<table class="table table-light table-striped align-middle">
 					<thead>
 						<tr>
 							<th><s:text name="label.codigo"/></th>
-							<th>Nome da Agenda</th>
+							<th><s:text name="label.nomeAgenda"/></th>
 							<th><s:text name="label.periodoDisponivel"/></th>
 							<th class="text-end mt-5"><s:text name="label.acao"/></th>
 						</tr>
@@ -80,10 +80,16 @@
 					<tfoot class="table-secondary">
 						<tr>
 							<td colspan="4">
-								<s:url action="novaAgenda" var="novo"/>
+								<div class="d-flex justify-content-between">
+									<s:url action="novaAgenda" var="novo"/>
 									<a href="${novo}" class="btn btn-success">
-    									Nova Agenda
+										<s:text name="label.novaAgenda"/>
 									</a>
+									<s:url action="dashboard" namespace="/" var="dashboard"/>
+									<a href="${dashboard}" class="btn btn-info text-white">
+										<s:text name="label.dashboard"/>
+									</a>
+								</div>
 							</td>
 						</tr>
 					</tfoot>				
@@ -94,15 +100,15 @@
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title">Confirmação de Exclusão</h5>
+		        <h5 class="modal-title"><s:text name="label.modal.titulo"/></h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		      	<span>Deseja realmente excluir a agenda?</span>
+		      	<span><s:text name="label.modal.corpo"/></span>
 		      </div>
 		      <div class="modal-footer">
-	        	<a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Não</a>
-				<s:a id="excluir" action="excluirAgendas" class="btn btn-primary" style="width: 75px;">Sim</s:a>						
+	        	<a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close"><s:text name="label.nao"/></a>
+				<s:a id="excluir" action="excluirAgendas" class="btn btn-primary" style="width: 75px;"><s:text name="label.sim"/></s:a>						
 		      </div>
 		    </div>		    
 		  </div>

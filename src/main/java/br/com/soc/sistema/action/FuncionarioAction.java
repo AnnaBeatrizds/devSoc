@@ -39,14 +39,24 @@ public class FuncionarioAction extends Action {
 	}
 	
 	public String novo() {
-		if(funcionarioVo.getNmFuncionario() == null)
-			return INPUT;
-		
-		business.salvarFuncionario(funcionarioVo);
-		return REDIRECT;
+		if(funcionarioVo == null) {
+			funcionarioVo = new FuncionarioVo();
+		}
+		return INPUT;
 	}
 
-	public void validateNovo() {
+	public String salvar() {
+		try {
+			business.salvarFuncionario(funcionarioVo);
+			return REDIRECT;
+		} catch (Exception e) {
+			addActionError("Erro ao salvar funcionário: " + e.getMessage());
+			e.printStackTrace();
+			return INPUT;
+		}
+	}
+
+	public void validateSalvar() {
 	    if (funcionarioVo.getNmFuncionario() == null || funcionarioVo.getNmFuncionario().trim().isEmpty()) {
 	        addFieldError("funcionarioVo.nmFuncionario", "O nome do funcionário não pode ser vazio.");
 	    }
@@ -67,6 +77,12 @@ public class FuncionarioAction extends Action {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return INPUT;
+	    }
+	}
+	
+	public void validateAlterar() {
+		if (funcionarioVo.getNmFuncionario() == null || funcionarioVo.getNmFuncionario().trim().isEmpty()) {
+	        addFieldError("funcionarioVo.nmFuncionario", "O nome do funcionário não pode ser vazio.");
 	    }
 	}
 

@@ -8,7 +8,7 @@
 		<s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
 		<link rel='stylesheet' href='${bootstrap_css}'>
 	</head>
-	<body class="bg-secondary">	
+	<body class="bg-light">	
 		<div class="container">
 			<s:actionerror cssClass="alert alert-danger mt-3"/>
 			<s:actionmessage cssClass="alert alert-success mt-3"/>
@@ -48,7 +48,7 @@
 				</s:if>
 			</div>
 
-			<div class="row">
+			<div class="row border">
 				<table class="table table-light table-striped align-middle">
 					<thead>
 						<tr>
@@ -81,10 +81,16 @@
 					<tfoot class="table-secondary">
 						<tr>
 							<td colspan="3">
-								<s:url action="novoFuncionarios" var="novo"/>
-								<a href="${novo}" class="btn btn-success">
-									<s:text name="label.novo"/>
-								</a>
+								<div class="d-flex justify-content-between">
+									<s:url action="novoFuncionarios" var="novo"/>
+									<a href="${novo}" class="btn btn-success">
+										<s:text name="label.novo"/>
+									</a>
+									<s:url action="dashboard" namespace="/" var="dashboard"/>
+									<a href="${dashboard}" class="btn btn-info text-white">
+										<s:text name="label.dashboard"/>
+									</a>
+								</div>
 							</td>
 						</tr>
 					</tfoot>				
