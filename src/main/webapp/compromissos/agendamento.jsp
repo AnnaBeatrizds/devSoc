@@ -102,7 +102,7 @@
 
        function buscarDatasOcupadas(codigo) {
            const xhr = new XMLHttpRequest();
-           xhr.open('GET', '<s:url action="buscarDatasOcupadas" namespace="/compromisso"/>' + '?idAgenda=' + encodeURIComponent(codigo), true);
+			xhr.open('GET', '<s:url action="visualizarHorarios" namespace="/compromisso"/>' + '?compromissoVo.idAgenda=' + encodeURIComponent(codigo), true);
            xhr.onreadystatechange = function() {
                if (xhr.readyState === 4) {
                    if (xhr.status === 200) {

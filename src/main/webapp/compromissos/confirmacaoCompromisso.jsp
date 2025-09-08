@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <s:form id="form-principal" action="salvarCompromissoAjax" method="post">
+            <s:form id="form-principal" action="salvarCompromisso" method="post">
                 <s:hidden name="compromissoVo.idFuncionario" />
                 <s:hidden name="compromissoVo.idAgenda" />
                 <s:hidden name="compromissoVo.dataCompromisso" />
@@ -107,7 +107,6 @@ function marcarHorario(hora) {
     document.getElementById('horaSelecionada').value = hora;
     const form = document.getElementById('form-principal');
     const formData = new FormData(form);
-
     fetch(form.action, {
         method: 'POST',
         body: formData

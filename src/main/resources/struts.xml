@@ -86,13 +86,6 @@
         <result name="input">/compromissos/agendamento.jsp</result>
         <result name="error" type="redirectAction">novoCompromisso</result>
     </action>
-
-    <action name="salvarCompromissoAjax" class="br.com.soc.sistema.action.CompromissoAction" method="salvarCompromissoAjax">
-        <result name="success" type="json"/>
-        <result name="error" type="httpheader">
-            <param name="status">500</param>
-        </result>
-    </action>
     
     <action name="listarCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="listar">
         <result name="success">/compromissos/listaCompromissos.jsp</result>

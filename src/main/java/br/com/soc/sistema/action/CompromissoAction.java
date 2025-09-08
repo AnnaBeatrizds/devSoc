@@ -93,6 +93,10 @@ public class CompromissoAction extends ActionSupport {
 
     public String salvar() {
         try {
+            if (compromissoVo.getExamesSelecionados() != null) {
+                compromissoVo.setExamesIds(compromissoVo.getExamesSelecionados());
+            }
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date dataConvertida = sdf.parse(compromissoVo.getDataCompromisso());
             compromissoVo.setDataCompromissoObjeto(dataConvertida);
@@ -146,7 +150,14 @@ public class CompromissoAction extends ActionSupport {
                 agendar();
                 return INPUT;
             }
+
             AgendaVo agenda = agendaBusiness.buscarAgendaPor(compromissoVo.getIdAgenda());
+          
+            if (agenda == null) {
+                addActionError("Agenda selecionada não foi encontrada.");
+                agendar();
+                return ERROR;
+            }
             FuncionarioVo funcionario = funcionarioBusiness.buscarFuncionarioPor(compromissoVo.getIdFuncionario());
             compromissoVo.setNomeAgenda(agenda.getNmAgenda());
             compromissoVo.setNomeFuncionario(funcionario.getNmFuncionario());
