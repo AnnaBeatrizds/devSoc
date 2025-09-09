@@ -6,41 +6,32 @@
     <meta charset="UTF-8">
     <title>Editar Compromisso</title>
 
-    <!-- Importa CSS do Bootstrap para layout -->
     <s:url value="/webjars/bootstrap/5.1.3/css/bootstrap.min.css" var="bootstrap_css" />
     <link rel="stylesheet" href="${bootstrap_css}">
 
-    <!-- Flatpickr para seleção de datas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body class="bg-light">
 
-<!-- =================== Container principal =================== -->
 <div class="container mt-4 border">
     <div class="card">
 
-        <!-- =================== Cabeçalho do card =================== -->
         <div class="card-header">
             <h4><s:text name="label.editarCompromisso"/></h4>
         </div>
 
-        <!-- =================== Corpo do card =================== -->
         <div class="card-body">
 
-            <!-- Mostra erros de ação, caso existam -->
             <s:if test="hasActionErrors()">
                 <div class="alert alert-danger" role="alert">
                     <s:actionerror/>
                 </div>
             </s:if>
 
-            <!-- =================== Formulário de edição =================== -->
             <s:form action="salvarCompromisso" id="formCompromisso" theme="simple">
-                <!-- Campo escondido com o código do compromisso -->
                 <s:hidden name="compromissoVo.codigo" />
 
-                <!-- =================== Seleção de Agenda =================== -->
                 <fieldset class="border p-3 mb-3">
                     <legend><s:text name="label.selecioneAgenda"/></legend>
                     <div class="row">
@@ -59,11 +50,9 @@
                     </div>
                 </fieldset>
 
-                <!-- =================== Seleção de Funcionário e Data =================== -->
                 <fieldset class="border p-3 mb-3">
                     <legend><s:text name="label.selecioneFuncionarioData"/></legend>
                     <div class="row align-items-end">
-                        <!-- Seleção de Funcionário -->
                         <div class="col-md-6">
                             <label for="funcionario" class="form-label"><s:text name="label.funcionario"/></label>
                             <s:select
@@ -77,31 +66,26 @@
                                 headerValue="%{getText('label.escolhaFuncionario')}"
                             />
                         </div>
-                        <!-- Campo de Data + Botão Verificar horários -->
                         <div class="col-md-6">
                             <label for="dataCompromisso" class="form-label"><s:text name="label.dataCompromisso"/></label>
                             <div class="input-group">
                                 <s:textfield id="dataCompromisso" name="compromissoVo.dataCompromisso" cssClass="form-control" placeholder="%{getText('label.selecioneData')}"/>
-                                <s:submit action="recarregarHorariosEdicao" value="Verificar" cssClass="btn btn-outline-secondary"/>
+                                <s:submit action="recarregarHorariosEdicao" value="Verificar" cssClass="btn btn-outline-secondary" id="btnVerificar"/>
                             </div>
                         </div>
                     </div>
                 </fieldset>
 
-                <!-- =================== Seleção de Horário e Exames =================== -->
                 <fieldset class="border p-3 mb-3">
                     <legend><s:text name="label.selecioneHorarioExames"/></legend>
                     <div class="row">
-                        <!-- Seleção de Horário -->
                         <div class="col-md-6">
                             <label for="horaCompromisso" class="form-label">Hora do Compromisso</label>
                             <select class="form-control" name="compromissoVo.horaCompromisso" id="horaCompromisso">
                                 <s:iterator value="todosOsHorarios" var="hora">
-                                    <!-- Horário ocupado fica desabilitado -->
                                     <s:if test="%{#hora in horariosOcupados}">
                                         <option value="<s:property value='#hora'/>" disabled><s:property value='#hora'/> - Indisponível</option>
                                     </s:if>
-                                    <!-- Horário disponível -->
                                     <s:else>
                                         <option value="<s:property value='#hora'/>" <s:if test="%{#hora == compromissoVo.horaCompromisso}">selected</s:if>>
                                             <s:property value='#hora'/>
@@ -110,7 +94,6 @@
                                 </s:iterator>
                             </select>
                         </div>
-                        <!-- Seleção de Exames -->
                         <div class="col-md-6">
                             <label for="examesSelecionados" class="form-label">Exames</label>
                             <s:checkboxlist name="compromissoVo.examesSelecionados"
@@ -123,14 +106,12 @@
                     </div>
                 </fieldset>
 
-                <!-- Botão Salvar alterações -->
                 <div class="d-grid gap-2">
                     <s:submit cssClass="btn btn-primary btn-lg" value="%{getText('label.salvarAlteracoes')}"/>
                 </div>
             </s:form>
         </div>
 
-        <!-- =================== Rodapé do card =================== -->
         <div class="card-footer">
             <div class="d-flex justify-content-between">
                 <s:url action="listarCompromissos" namespace="/compromisso" var="listar"/>
@@ -142,7 +123,6 @@
     </div>
 </div>
 
-<!-- =================== Scripts =================== -->
 <s:url value="/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js" var="bootstrap_js"/>
 <script src="${bootstrap_js}"></script>
 
@@ -155,6 +135,11 @@
             altFormat: "d/m/Y",
             placeholder: "Selecione uma data...",
         });
+    });
+
+    // Adiciona o evento de 'change' ao select da agenda para submeter o formulário
+    document.getElementById('selectAgenda').addEventListener('change', function() {
+        document.getElementById('btnVerificar').click();
     });
 </script>
 
