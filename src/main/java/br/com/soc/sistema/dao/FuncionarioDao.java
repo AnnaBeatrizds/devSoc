@@ -12,6 +12,7 @@ import br.com.soc.sistema.vo.FuncionarioVo;
 
 public class FuncionarioDao extends Dao {
 	
+	// Insere um novo funcionário no banco de dados
 	public void insertFuncionario(FuncionarioVo funcionarioVo){
 		StringBuilder query = new StringBuilder("INSERT INTO funcionario (nm_funcionario) values (?)");
 		try(
@@ -26,6 +27,7 @@ public class FuncionarioDao extends Dao {
 		}
 	}
 	
+	// Busca todos os funcionários cadastrados no banco de dados
 	public List<FuncionarioVo> findAllFuncionarios(){
 		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario");
 		try(
@@ -47,6 +49,7 @@ public class FuncionarioDao extends Dao {
 		return Collections.emptyList();
 	}
 	
+	// Busca funcionarios pelo nome
 	public List<FuncionarioVo> findAllByNome(String nome){
 		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario ")
 								.append("WHERE lower(nm_funcionario) like lower(?)");
@@ -72,6 +75,7 @@ public class FuncionarioDao extends Dao {
 		return Collections.emptyList();
 	}
 	
+	// Busca funcionarios pelo ID
 	public FuncionarioVo findByCodigo(Long codigo){
 		StringBuilder query = new StringBuilder("SELECT rowid, nm_funcionario FROM funcionario ")
 								.append("WHERE rowid = ?");
@@ -96,6 +100,7 @@ public class FuncionarioDao extends Dao {
 		return null;
 	}
 	
+	// Exclui um funcionario pelo id
 	public void excluir(Long rowid) {
 	    StringBuilder query = new StringBuilder("DELETE FROM funcionario WHERE rowid = ?");
 	    try (Connection con = getConexao();
@@ -107,6 +112,7 @@ public class FuncionarioDao extends Dao {
 	    }
 	}
 	
+	// Atualiza os dados de um funcionário no banco de dados
 	public void atualizarFuncionario(FuncionarioVo funcionarioVo) {
 	    StringBuilder query = new StringBuilder("UPDATE funcionario SET nm_funcionario = ? WHERE rowid = ?");
 

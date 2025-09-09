@@ -4,19 +4,31 @@ import java.util.Date;
 import java.util.List;
 
 public class CompromissoVo {
-
+	
+	// Atributos
     private Integer codigo;
     private Long idFuncionario;
     private Integer idAgenda;
     private String dataCompromisso;
     private String horaCompromisso;
+    
+    // Lista de IDs dos exames associados ao compromisso
     private List<Integer> examesIds;
+    
+    // Representação da data do compromisso
     private Date dataCompromissoObjeto;
+    
+    // Atributos para informaçoes adicionais
     private String nomeFuncionario;
     private String nomeAgenda;
+    
+    // Lista de IDs dos exames selecionado
     private List<Integer> examesSelecionados;
+    
+    // Construtor Vazio
     public CompromissoVo() {}
 
+    // Getters e Setters
     public Integer getCodigo() {
         return codigo;
     }

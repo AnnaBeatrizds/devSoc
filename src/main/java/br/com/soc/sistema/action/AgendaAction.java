@@ -21,18 +21,21 @@ public class AgendaAction extends ActionSupport {
     private List<OpcoesComboBuscar> listaOpcoesCombo = new ArrayList<>();
     private List<ExameVo> listaTodosExames = new ArrayList<>();
 
+    // Lista todas as agendas
     public String listar() {
         agendas = business.trazerTodasAsAgendas();
         popularListas();
         return SUCCESS;
     }
 
+    // Prepara o formulário de cadastro de uma nova agenda
     public String novo() {
         agendaVo = new AgendaVo();
         popularListas();
         return "input";
     }
 
+    // Salva ou alterar uma agenda
     public String salvar() {
         try {
             if (agendaVo.getCodigo() == null) {
@@ -48,12 +51,14 @@ public class AgendaAction extends ActionSupport {
         }
     }
 
+    // Carregar os dados de uma agenda para edição
     public String editar() {
         agendaVo = business.buscarAgendaPor(agendaVo.getCodigo());
         popularListas();
         return "input";
     }
 
+    // Exclui uma agenda
     public String excluir() {
         try {
             business.excluirAgenda(agendaVo.getCodigo());
@@ -66,6 +71,7 @@ public class AgendaAction extends ActionSupport {
         }
     }
     
+    // Filtra as agendas com base em no critério de busca
     public String filtrar() {
         try {
             if (filter.isNullOpcoesCombo()) {
@@ -82,11 +88,13 @@ public class AgendaAction extends ActionSupport {
         }
     }
 
+    // Popula as listas de opções (exames e combos de busca)
     private void popularListas() {
         listaTodosExames = business.trazerTodosExames();
         listaOpcoesCombo = OpcoesComboBuscar.getOpcoesComboBuscar();
     }
     
+    // Getters e Setters
     public List<AgendaVo> getAgendas() {
         return agendas;
     }

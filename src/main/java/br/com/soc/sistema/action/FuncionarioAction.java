@@ -19,11 +19,13 @@ public class FuncionarioAction extends Action {
 	private FuncionarioVo funcionarioVo = new FuncionarioVo();
 	private String rowid;
 	
+	//  Lista todos os funcionários
 	public String todos() {
 		funcionarios.addAll(business.trazerTodosOsFuncionarios());	
 		return SUCCESS;
 	}
 	
+	// Filtra funcionários com base no critério de busca
 	public String filtrar() {
 		try {
 			if(filtrar.isNullOpcoesCombo())
@@ -38,13 +40,15 @@ public class FuncionarioAction extends Action {
 		}
 	}
 	
+	// Preparar a página de cadastro de um novo funcionário
 	public String novo() {
 		if(funcionarioVo == null) {
 			funcionarioVo = new FuncionarioVo();
 		}
 		return INPUT;
 	}
-
+ 
+	// Salva um novo funcionário ou atualiza um existente
 	public String salvar() {
 		try {
 			business.salvarFuncionario(funcionarioVo);
@@ -56,12 +60,14 @@ public class FuncionarioAction extends Action {
 		}
 	}
 
+	// É executado automaticamente antes do método 'salvar' para validar o nome do funcionário
 	public void validateSalvar() {
 	    if (funcionarioVo.getNmFuncionario() == null || funcionarioVo.getNmFuncionario().trim().isEmpty()) {
 	        addFieldError("funcionarioVo.nmFuncionario", "O nome do funcionário não pode ser vazio.");
 	    }
 	}
 
+	// Carrega os dados de um funcionário para edição
 	public String editar() {
 		if(funcionarioVo.getRowid() == null)
 			return REDIRECT;
@@ -70,6 +76,7 @@ public class FuncionarioAction extends Action {
 		return INPUT;
 	}
 
+	// Altera um funcionário existente
 	public String alterar() {
 	    try {
 	        business.alterarFuncionario(funcionarioVo);
@@ -80,12 +87,14 @@ public class FuncionarioAction extends Action {
 	    }
 	}
 	
+	// Garante que o nome do funcionário não seja vazio
 	public void validateAlterar() {
 		if (funcionarioVo.getNmFuncionario() == null || funcionarioVo.getNmFuncionario().trim().isEmpty()) {
 	        addFieldError("funcionarioVo.nmFuncionario", "O nome do funcionário não pode ser vazio.");
 	    }
 	}
 
+	// Excluir um funcionário
 	public String excluir() {
 	    try {
 	        business.excluirFuncionario(Long.parseLong(this.rowid));
@@ -102,6 +111,7 @@ public class FuncionarioAction extends Action {
 	    }
 	}
 
+	//Getters e Setters
 	public void setRowid(String rowid) {
 	    this.rowid = rowid;
 	}

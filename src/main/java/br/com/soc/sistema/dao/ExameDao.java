@@ -11,6 +11,7 @@ import br.com.soc.sistema.vo.ExameVo;
 
 public class ExameDao extends Dao {
 
+	// Lista todos os exames cadastrados no banco de dados
     public List<ExameVo> listarTodosExames() {
         List<ExameVo> exames = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT id, nm_exame FROM exame");
@@ -30,7 +31,8 @@ public class ExameDao extends Dao {
         }
         return exames;
     }
-
+    
+    // Associa uma lista de exames a uma agenda específica
     public void associarExamesAgenda(Integer codigoAgenda, List<Integer> examesIds) {
         StringBuilder sql = new StringBuilder("INSERT INTO agenda_exames (agenda_codigo, exame_id) VALUES (?, ?)");
 
@@ -48,6 +50,7 @@ public class ExameDao extends Dao {
         }
     }
 
+    // Remove todos os exames associados a uma agenda
     public void removerExamesDaAgenda(Integer codigoAgenda) {
         StringBuilder sql = new StringBuilder("DELETE FROM agenda_exames WHERE agenda_codigo = ?");
 
@@ -60,7 +63,8 @@ public class ExameDao extends Dao {
             e.printStackTrace();
         }
     }
-
+    
+    // Lista todos os exames associados a uma agenda específica
     public List<ExameVo> listarExamesPorAgenda(Integer codigoAgenda) {
         List<ExameVo> exames = new ArrayList<>();
         StringBuilder sql = new StringBuilder(

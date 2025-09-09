@@ -4,14 +4,17 @@
     "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
-    <constant name="struts.devMode" value="true" />
-    <constant name="struts.ui.theme" value="simple" />
-    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
-    <constant name="struts.custom.i18n.resources" value="ApplicationResources" />
-    <constant name="struts.action.excludePattern" value="/webjars/.*,/h2-console/*" />
-    <constant name="struts.i18n.encoding" value="UTF-8" />
+    <!-- CONFIGURAÇÕES GLOBAIS DO STRUTS -->
+    <constant name="struts.devMode" value="true" /> <!-- Ativa modo de desenvolvimento (mostra erros detalhados) -->
+    <constant name="struts.ui.theme" value="simple" /> <!-- Define o tema dos componentes UI -->
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" /> <!-- Desabilita invocação dinâmica (mais seguro) -->
+    <constant name="struts.custom.i18n.resources" value="ApplicationResources" /> <!-- Arquivo de internacionalização -->
+    <constant name="struts.action.excludePattern" value="/webjars/.*,/h2-console/*" /> <!-- Ignora essas rotas -->
+    <constant name="struts.i18n.encoding" value="UTF-8" /> <!-- Define encoding padrão -->
 
+    <!-- PACOTE FUNCIONÁRIO -->
     <package name="br.com.soc.sistema" extends="struts-default" strict-method-invocation="false">
+        <!-- Todas as ações terminadas em Funcionarios são tratadas aqui -->
         <action name="*Funcionarios" class="br.com.soc.sistema.action.FuncionarioAction" method="{1}">
             <result name="success">/funcionario/cadFuncionario_b.jsp</result>
             <result name="input">/funcionario/cadFuncionario_i.jsp</result>
@@ -20,6 +23,7 @@
         </action>
     </package>
 		
+    <!-- PACOTE AGENDA -->
     <package name="Agenda" extends="struts-default, json-default">
         <action name="todasAgendas" class="br.com.soc.sistema.action.AgendaAction" method="listar">
             <result name="success">/agenda/cadAgenda_b.jsp</result>
@@ -60,83 +64,89 @@
         </action>
     </package>
 
- <package name="Compromisso" extends="struts-default, json-default" strict-method-invocation="false" namespace="/compromisso">
+    <!-- PACOTE COMPROMISSO -->
+    <package name="Compromisso" extends="struts-default, json-default" strict-method-invocation="false" namespace="/compromisso">
     
-    <action name="novoCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="agendar">
-        <result name="input">/compromissos/agendamento.jsp</result>
-    </action>
+        <action name="novoCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="agendar">
+            <result name="input">/compromissos/agendamento.jsp</result>
+        </action>
 
-    <action name="buscarDatasOcupadas" class="br.com.soc.sistema.action.CompromissoAction" method="buscarDatasOcupadas">
-        <result name="success" type="json">
-            <param name="root">datasOcupadas</param>
-        </result>
-        <result name="error" type="httpheader">
-            <param name="status">500</param>
-        </result>
-    </action>
-    
-    <action name="salvarCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="salvar">
-        <result name="success" type="redirectAction">listarCompromissos</result>
-        <result name="input">/compromissos/editarCompromisso.jsp</result>
-        <result name="error" type="redirectAction">listarCompromissos</result>
-    </action>
+        <action name="buscarDatasOcupadas" class="br.com.soc.sistema.action.CompromissoAction" method="buscarDatasOcupadas">
+            <result name="success" type="json">
+                <param name="root">datasOcupadas</param>
+            </result>
+            <result name="error" type="httpheader">
+                <param name="status">500</param>
+            </result>
+        </action>
+        
+        <action name="salvarCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="salvar">
+            <result name="success" type="redirectAction">listarCompromissos</result>
+            <result name="input">/compromissos/editarCompromisso.jsp</result>
+            <result name="error" type="redirectAction">listarCompromissos</result>
+        </action>
 
-    <action name="visualizarHorarios" class="br.com.soc.sistema.action.CompromissoAction" method="visualizarHorarios">
-        <result name="success">/compromissos/confirmacaoCompromisso.jsp</result>
-        <result name="input">/compromissos/agendamento.jsp</result>
-        <result name="error" type="redirectAction">novoCompromisso</result>
-    </action>
-    
-    <action name="listarCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="listar">
-        <result name="success">/compromissos/listaCompromissos.jsp</result>
-    </action>
+        <action name="visualizarHorarios" class="br.com.soc.sistema.action.CompromissoAction" method="visualizarHorarios">
+            <result name="success">/compromissos/confirmacaoCompromisso.jsp</result>
+            <result name="input">/compromissos/agendamento.jsp</result>
+            <result name="error" type="redirectAction">novoCompromisso</result>
+        </action>
+        
+        <action name="listarCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="listar">
+            <result name="success">/compromissos/listaCompromissos.jsp</result>
+        </action>
 
-    <action name="editarCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="editar">
-        <result name="input">/compromissos/editarCompromisso.jsp</result>
-    </action>
+        <action name="editarCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="editar">
+            <result name="input">/compromissos/editarCompromisso.jsp</result>
+        </action>
 
-    <action name="recarregarHorariosEdicao" class="br.com.soc.sistema.action.CompromissoAction" method="recarregarHorariosEdicao">
-        <result name="input">/compromissos/editarCompromisso.jsp</result>
-    </action>
-    
-    <action name="excluirCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="excluir">
-        <result name="success" type="redirectAction">listarCompromissos</result>
-        <result name="error" type="redirectAction">listarCompromissos</result>
-    </action>
-    
-    <action name="filtrarCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="filtrar">
-        <result name="success">/compromissos/listaCompromissos.jsp</result>
-        <result name="error">/compromissos/listaCompromissos.jsp</result>
-    </action>
-    
-     <action name="relatorioCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="relatorio">
-        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
-    </action>
+        <action name="recarregarHorariosEdicao" class="br.com.soc.sistema.action.CompromissoAction" method="recarregarHorariosEdicao">
+            <result name="input">/compromissos/editarCompromisso.jsp</result>
+        </action>
+        
+        <action name="excluirCompromisso" class="br.com.soc.sistema.action.CompromissoAction" method="excluir">
+            <result name="success" type="redirectAction">listarCompromissos</result>
+            <result name="error" type="redirectAction">listarCompromissos</result>
+        </action>
+        
+        <action name="filtrarCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="filtrar">
+            <result name="success">/compromissos/listaCompromissos.jsp</result>
+            <result name="error">/compromissos/listaCompromissos.jsp</result>
+        </action>
+        
+        <action name="relatorioCompromissos" class="br.com.soc.sistema.action.CompromissoAction" method="relatorio">
+            <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+        </action>
 
-    <action name="gerarRelatorioHTML" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioHTML">
-        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
-        <result name="error">/compromissos/relatorioCompromissos.jsp</result>
-        <result name="input">/compromissos/relatorioCompromissos.jsp</result>
-    </action>
+        <action name="gerarRelatorioHTML" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioHTML">
+            <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+            <result name="error">/compromissos/relatorioCompromissos.jsp</result>
+            <result name="input">/compromissos/relatorioCompromissos.jsp</result>
+        </action>
 
-    <action name="gerarRelatorioExcel" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioExcel">
-        <result name="success" type="stream">
-            <param name="contentType">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
-            <param name="inputName">inputStream</param>
-            <param name="contentDisposition">attachment;filename="${fileName}"</param>
-            <param name="bufferSize">1024</param>
-        </result>
-        <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
-        <result name="error">/compromissos/relatorioCompromissos.jsp</result>
-        <result name="input">/compromissos/relatorioCompromissos.jsp</result>
-    </action>
-</package>
-<package name="dashboard" namespace="/" extends="struts-default">
-    <action name="">
-        <result type="redirectAction">dashboard</result>
-    </action>
-    <action name="dashboard" class="br.com.soc.sistema.action.DashboardAction" method="execute">
-        <result name="success">/dashboard.jsp</result>
-    </action>
-</package>
+        <action name="gerarRelatorioExcel" class="br.com.soc.sistema.action.CompromissoAction" method="gerarRelatorioExcel">
+            <result name="success" type="stream">
+                <param name="contentType">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">attachment;filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <result name="relatorio">/compromissos/relatorioCompromissos.jsp</result>
+            <result name="error">/compromissos/relatorioCompromissos.jsp</result>
+            <result name="input">/compromissos/relatorioCompromissos.jsp</result>
+        </action>
+    </package>
+
+    <!-- PACOTE DASHBOARD -->
+    <package name="dashboard" namespace="/" extends="struts-default">
+        <!-- Redireciona root (/) para dashboard -->
+        <action name="">
+            <result type="redirectAction">dashboard</result>
+        </action>
+        
+        <!-- Ação principal do Dashboard -->
+        <action name="dashboard" class="br.com.soc.sistema.action.DashboardAction" method="execute">
+            <result name="success">/dashboard.jsp</result>
+        </action>
+    </package>
 </struts>

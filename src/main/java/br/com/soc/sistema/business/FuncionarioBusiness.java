@@ -23,10 +23,12 @@ public class FuncionarioBusiness {
 		this.compromissoDao = new CompromissoDao();
 	}
 	
+	// Traz todos os funcionários cadastrados no banco
 	public List<FuncionarioVo> trazerTodosOsFuncionarios(){
 		return dao.findAllFuncionarios();
 	}	
 	
+	// Salva um novo funcionário após validar o nome
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
 		try {
 			if(funcionarioVo.getNmFuncionario().isEmpty())
@@ -38,6 +40,7 @@ public class FuncionarioBusiness {
 		}
 	}	
 	
+	// Filtra os funcionários com base em um critério (ID ou Nome)
 	public List<FuncionarioVo> filtrarFuncionarios(FuncionarioFilter filter){
 		List<FuncionarioVo> funcionarios = new ArrayList<>();
 		
@@ -62,15 +65,18 @@ public class FuncionarioBusiness {
 		return funcionarios;
 	}
 	
+	// Busca um funcionário pelo seu código
 	public FuncionarioVo buscarFuncionarioPor(Long codigo) {
 		return dao.findByCodigo(codigo);
 	}
 	
+	// Exclui um funcionário e todos os compromissos associados a ele
 	public void excluirFuncionario(Long rowid) {
 	    compromissoDao.excluirPorFuncionarioId(rowid);
 	    dao.excluir(rowid);
 	}
-
+	
+	// Altera um funcionário existente após validar o nome
 	public void alterarFuncionario(FuncionarioVo funcionarioVo) {
 	    try {
 	        if(funcionarioVo.getNmFuncionario().isEmpty()) {

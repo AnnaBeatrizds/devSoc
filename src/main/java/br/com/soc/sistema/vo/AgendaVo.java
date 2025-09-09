@@ -3,14 +3,22 @@ package br.com.soc.sistema.vo;
 import java.util.List;
 
 public class AgendaVo {
+	
+	// Atributos
     private Integer codigo;
     private String nmAgenda;
     private String periodo;
+    
+    // Lista de IDs dos exames associados à agenda.
     private List<Integer> examesIds;
+    
+    // Lista de objetos de exame associados à agenda.
     private List<ExameVo> exames; 
-
+    
+    // Construtor Vazio
     public AgendaVo() {}
-
+    
+    // Getters e Setters 
     public Integer getCodigo() {
         return codigo;
     }

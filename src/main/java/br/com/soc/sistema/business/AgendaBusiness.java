@@ -22,7 +22,8 @@ public class AgendaBusiness {
         this.agendaDao = new AgendaDao();
         this.exameDao = new ExameDao();
     }
-
+    
+    // Traz todas as agendas cadastradas
     public List<AgendaVo> trazerTodasAsAgendas() {
         try {
             return agendaDao.listarTodasAgendas();
@@ -30,7 +31,8 @@ public class AgendaBusiness {
             throw new BusinessException(ERRO_LISTAR_AGENDAS, e);
         }
     }
-
+ 
+    // Busca uma agenda específica pelo seu código, incluindo os exames a ela associados
     public AgendaVo buscarAgendaPor(Integer codigo) {
         AgendaVo agenda = agendaDao.buscarAgendaPorCodigo(codigo);
       
@@ -47,6 +49,7 @@ public class AgendaBusiness {
         return agenda;
     }
 
+    // Valida e salva uma nova agenda
     public void salvarAgenda(AgendaVo agenda) {
         if(agenda.getNmAgenda() == null || agenda.getNmAgenda().isEmpty()) {
             throw new BusinessException(NOME_VAZIO);
@@ -60,6 +63,7 @@ public class AgendaBusiness {
         }
     }
 
+    // Valida e altera uma agenda existente
     public void alterarAgenda(AgendaVo agenda) {
         if(agenda.getNmAgenda() == null || agenda.getNmAgenda().isEmpty()) {
             throw new BusinessException(NOME_VAZIO);
@@ -67,14 +71,17 @@ public class AgendaBusiness {
         agendaDao.editarAgenda(agenda);
     }
 
+    // Exclui uma agenda pelo seu código.
     public void excluirAgenda(Integer codigo) {
         agendaDao.excluirAgenda(codigo);
     }
 
+    // Traz a lista de todos os exames cadastrados.
     public List<ExameVo> trazerTodosExames() {
         return exameDao.listarTodosExames();
     }
 
+    // Filtra as agendas com base em um critério (ID ou Nome)
     public List<AgendaVo> filtrarAgendas(AgendaFilter filter) {
         if (filter == null || filter.isNullOpcoesCombo()) {
             return trazerTodasAsAgendas();

@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
+
 
 import br.com.soc.sistema.business.AgendaBusiness;
 import br.com.soc.sistema.business.CompromissoBusiness;
@@ -36,29 +36,33 @@ import br.com.soc.sistema.vo.ExameVo;
 import br.com.soc.sistema.vo.FuncionarioVo;
 
 public class CompromissoAction extends ActionSupport {
-    
+	
+	// Instâncias das camadas de negócio para acesso às regras e dados.
     private FuncionarioBusiness funcionarioBusiness = new FuncionarioBusiness();
     private AgendaBusiness agendaBusiness = new AgendaBusiness();
     private CompromissoBusiness compromissoBusiness = new CompromissoBusiness();
     
-
+    // Listas e objetos para manipulação de dados nas JSPs
     private List<FuncionarioVo> funcionarios = new ArrayList<>();
     private List<AgendaVo> agendas = new ArrayList<>();
     private CompromissoVo compromissoVo = new CompromissoVo();
     
+    // Listas para a página de agendamento e edição.
     private List<ExameVo> listaExamesDisponiveis = new ArrayList<>();
     private List<String> todosOsHorarios = new ArrayList<>();
     private List<String> horariosOcupados = new ArrayList<>();
     
-
+    // Listas e objetos para a página de listagem e filtro.
     private List<CompromissoVo> compromissos = new ArrayList<>();
     private CompromissoFilter filter = new CompromissoFilter();
     
+    // Propriedades para o relatório.
     private Date dataInicial;
     private Date dataFinal;
     private InputStream inputStream;
     private String fileName;
 
+    // Carrega os dados de um compromisso para edição
     public String editar() {
         try {
             
@@ -90,6 +94,7 @@ public class CompromissoAction extends ActionSupport {
         return INPUT;
     }
 
+    // Recarrega os horários disponíveis na tela de edição,
     public String recarregarHorariosEdicao() {
         try {
             
@@ -111,6 +116,7 @@ public class CompromissoAction extends ActionSupport {
         return INPUT;
     }
 
+    // Salva um novo compromisso ou alterar um existente
     public String salvar() {
         try {
             if (compromissoVo.getExamesSelecionados() != null) {
@@ -139,12 +145,13 @@ public class CompromissoAction extends ActionSupport {
         }
     }
 
-
+    // Lista todos os compromissos
     public String listar() {
         compromissos = compromissoBusiness.trazerTodosOsCompromissos();
         return SUCCESS;
     }
     
+    // Filtra os compromissos com base no funcionário.
     public String filtrar() {
         try {
             if (filter.isNullOpcoesCombo()) return listar();
@@ -157,12 +164,14 @@ public class CompromissoAction extends ActionSupport {
         }
     }
     
+    // Prepara a página de agendamento de um novo compromisso
     public String agendar() {
         funcionarios = funcionarioBusiness.trazerTodosOsFuncionarios();
         agendas = agendaBusiness.trazerTodasAsAgendas();
         return INPUT;
     }
     
+    // Visualizar os horários disponíveis após selecionar funcionário, agenda e data
     public String visualizarHorarios() {
         try {
             if (compromissoVo.getIdAgenda() == null || compromissoVo.getIdFuncionario() == null || compromissoVo.getDataCompromisso() == null || compromissoVo.getDataCompromisso().isEmpty()) {
@@ -195,6 +204,7 @@ public class CompromissoAction extends ActionSupport {
         return SUCCESS;
     }
     
+    // Exclui um compromisso
     public String excluir() {
         try {
             compromissoBusiness.excluirCompromisso(compromissoVo.getCodigo());
@@ -207,6 +217,7 @@ public class CompromissoAction extends ActionSupport {
         }
     }
 
+    // Método auxiliar para gerar a lista de horários de acordo com o período da agenda
     private List<String> gerarHorariosParaPeriodo(String periodo) {
         List<String> horariosManha = Arrays.asList("08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30");
         List<String> horariosTarde = Arrays.asList("13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30");
@@ -219,10 +230,13 @@ public class CompromissoAction extends ActionSupport {
         }
         return Collections.emptyList();
     }
+    
+    // Exibe a página de relatório 
     public String relatorio() {
         return "relatorio";
     }
 
+    // Filtra os compromissos por período e exibe na página
     public String gerarRelatorioHTML() {
         try {
             if (dataInicial == null || dataFinal == null) {
@@ -238,7 +252,7 @@ public class CompromissoAction extends ActionSupport {
         }
     }
 
- 
+    // Gera e exporta o relatório de compromissos em um arquivo Excel (.xlsx)
     public String gerarRelatorioExcel() {
         try {
             if (dataInicial == null || dataFinal == null) {
@@ -292,24 +306,63 @@ public class CompromissoAction extends ActionSupport {
         }
     }
 
-    public Date getDataInicial() { return dataInicial; }
-    public void setDataInicial(Date dataInicial) { this.dataInicial = dataInicial; }
-    public Date getDataFinal() { return dataFinal; }
-    public void setDataFinal(Date dataFinal) { this.dataFinal = dataFinal; }
-    public InputStream getInputStream() { return inputStream; }
-    public String getFileName() { return fileName; }
+    // Getters e Setters
+    public Date getDataInicial() { 
+    	return dataInicial; 
+    	}
+    public void setDataInicial(Date dataInicial) { 
+    	this.dataInicial = dataInicial; 
+    	}
+    public Date getDataFinal() { 
+    	return dataFinal; 
+    	}
+    public void setDataFinal(Date dataFinal) {
+    	this.dataFinal = dataFinal; 
+    	}
+    public InputStream getInputStream() { 
+    	return inputStream; 
+    	}
+    public String getFileName() {
+    	return fileName; 
+    	}
     
-    public List<FuncionarioVo> getFuncionarios() { return funcionarios; }
-    public void setFuncionarios(List<FuncionarioVo> f) { this.funcionarios = f; }
-    public List<AgendaVo> getAgendas() { return agendas; }
-    public void setAgendas(List<AgendaVo> a) { this.agendas = a; }
-    public CompromissoVo getCompromissoVo() { return compromissoVo; }
-    public void setCompromissoVo(CompromissoVo c) { this.compromissoVo = c; }
-    public List<ExameVo> getListaExamesDisponiveis() { return listaExamesDisponiveis; }
-    public List<String> getTodosOsHorarios() { return todosOsHorarios; }
-    public List<String> getHorariosOcupados() { return horariosOcupados; }
-    public List<CompromissoVo> getCompromissos() { return compromissos; }
-    public CompromissoFilter getFilter() { return filter; }
-    public void setFilter(CompromissoFilter f) { this.filter = f; }
-    public List<OpcoesComboBuscar> getListaOpcoesCombo(){ return OpcoesComboBuscar.getOpcoesComboBuscar(); }
+    public List<FuncionarioVo> getFuncionarios() { 
+    	return funcionarios;
+    	}
+    public void setFuncionarios(List<FuncionarioVo> f) {
+    	this.funcionarios = f; 
+    	}
+    public List<AgendaVo> getAgendas() { 
+    	return agendas; 
+    	}
+    public void setAgendas(List<AgendaVo> a) { 
+    	this.agendas = a; 
+    	}
+    public CompromissoVo getCompromissoVo() { 
+    	return compromissoVo; 
+    	}
+    public void setCompromissoVo(CompromissoVo c) {
+    	this.compromissoVo = c;
+    	}
+    public List<ExameVo> getListaExamesDisponiveis() { 
+    	return listaExamesDisponiveis; 
+    	}
+    public List<String> getTodosOsHorarios() { 
+    	return todosOsHorarios; 
+    	}
+    public List<String> getHorariosOcupados() { 
+    	return horariosOcupados; 
+    	}
+    public List<CompromissoVo> getCompromissos() {
+    	return compromissos;
+    	}
+    public CompromissoFilter getFilter() {
+    	return filter; 
+    	}
+    public void setFilter(CompromissoFilter f) {
+    	this.filter = f;
+    	}
+    public List<OpcoesComboBuscar> getListaOpcoesCombo(){ 
+    	return OpcoesComboBuscar.getOpcoesComboBuscar();
+    	}
 }

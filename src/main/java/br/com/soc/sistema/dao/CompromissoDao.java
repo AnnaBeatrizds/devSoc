@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.soc.sistema.filter.CompromissoFilter;
-import br.com.soc.sistema.infra.OpcoesComboBuscar;
 import br.com.soc.sistema.vo.CompromissoVo;
 
 public class CompromissoDao extends Dao {
-
+	
+	// Filtra os compromissos com base em um critério de busca
 	public List<CompromissoVo> filtrarCompromissos(CompromissoFilter filtro) {
 	    List<CompromissoVo> compromissos = new ArrayList<>();
 	    StringBuilder query = new StringBuilder()
@@ -23,7 +23,8 @@ public class CompromissoDao extends Dao {
 	        .append("FROM compromisso c ")
 	        .append("JOIN funcionario f ON c.id_funcionario = f.rowid ")
 	        .append("JOIN agenda a ON c.id_agenda = a.codigo ");
-
+	    
+	 // Adiciona o WHERE dinamicamente, se um filtro foi aplicado
 	    if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
 	        switch (filtro.getOpcoesCombo()) {
 	            case ID:
@@ -38,7 +39,8 @@ public class CompromissoDao extends Dao {
 
 	    try (Connection con = getConexao();
 	         PreparedStatement ps = con.prepareStatement(query.toString())) {
-
+	    	
+	    	// Define o parâmetro da busca de acordo com a opção selecionada
 	        if (filtro.getOpcoesCombo() != null && filtro.getValorBusca() != null && !filtro.getValorBusca().isEmpty()) {
 	             switch (filtro.getOpcoesCombo()) {
 	                case NOME:
@@ -69,6 +71,7 @@ public class CompromissoDao extends Dao {
 	    return compromissos;
 	}
     
+	// Lista todos os compromissos cadastrados no banco de dados
     public List<CompromissoVo> listarTodosCompromissos() {
         List<CompromissoVo> compromissos = new ArrayList<>();
         StringBuilder query = new StringBuilder()
@@ -99,7 +102,8 @@ public class CompromissoDao extends Dao {
         }
         return compromissos;
     }
-
+    
+    // Busca um compromisso pelo seu código, informações do funcionário e agenda.
     public CompromissoVo buscarCompromissoPorCodigo(Integer codigo) {
         StringBuilder query = new StringBuilder(
             "SELECT c.codigo, c.id_funcionario, c.id_agenda, c.data_compromisso, c.hora_compromisso, f.nm_funcionario, a.nm_agenda " +
@@ -130,6 +134,7 @@ public class CompromissoDao extends Dao {
         return compromisso;
     }
 
+    // Altera um compromisso existente
     public void alterar(CompromissoVo compromisso) {
         StringBuilder query = new StringBuilder(
             "UPDATE compromisso SET id_funcionario = ?, id_agenda = ?, data_compromisso = ?, hora_compromisso = ? WHERE codigo = ?"
@@ -146,13 +151,15 @@ public class CompromissoDao extends Dao {
                 ps.setInt(5, compromisso.getCodigo());
                 ps.executeUpdate();
             }
-
+            
+            // Exclui os exames antigos antes de inserir os novos
             StringBuilder queryDeleteExames = new StringBuilder("DELETE FROM compromisso_exames WHERE compromisso_codigo = ?");
             try (PreparedStatement ps = con.prepareStatement(queryDeleteExames.toString())) {
                 ps.setInt(1, compromisso.getCodigo());
                 ps.executeUpdate();
             }
-
+            
+            // Insere os exames selecionados, se existirem
             if (compromisso.getExamesSelecionados() != null && !compromisso.getExamesSelecionados().isEmpty()) {
                 StringBuilder queryInsertExames = new StringBuilder("INSERT INTO compromisso_exames (compromisso_codigo, exame_id) VALUES (?, ?)");
                 try (PreparedStatement ps = con.prepareStatement(queryInsertExames.toString())) {
@@ -176,7 +183,8 @@ public class CompromissoDao extends Dao {
             } catch (SQLException e) { e.printStackTrace(); }
         }
     }
-
+    
+    // Exclui um compromisso pelo seu código
     public void excluirCompromisso(Integer codigo) {
         Connection con = null;
         StringBuilder queryExames = new StringBuilder("DELETE FROM compromisso_exames WHERE compromisso_codigo = ?");
@@ -185,12 +193,14 @@ public class CompromissoDao extends Dao {
         try {
             con = getConexao();
             con.setAutoCommit(false);
-
+            
+            // Exclui as associações de exames primeiro
             try (PreparedStatement ps = con.prepareStatement(queryExames.toString())) {
                 ps.setInt(1, codigo);
                 ps.executeUpdate();
             }
-
+            
+            // Exclui o compromisso
             try (PreparedStatement ps = con.prepareStatement(queryCompromisso.toString())) {
                 ps.setInt(1, codigo);
                 ps.executeUpdate();
@@ -213,6 +223,7 @@ public class CompromissoDao extends Dao {
         }
     }
     
+    // Exclui todos os compromissos associados a um funcionário
     public void excluirPorFuncionarioId(Long idFuncionario) {
         StringBuilder query = new StringBuilder("DELETE FROM compromisso WHERE id_funcionario = ?");
         
@@ -226,7 +237,8 @@ public class CompromissoDao extends Dao {
             throw new RuntimeException("Erro ao excluir compromissos por funcionário", e);
         }
     }
-
+    
+    //Busca datas que atingiram o limite de vagas para uma agenda específica
     public List<String> buscarDatasOcupadasPorAgenda(Integer idAgenda, int limiteDeVagas) {
         StringBuilder query = new StringBuilder()
             .append("SELECT data_compromisso FROM compromisso ")
@@ -253,6 +265,7 @@ public class CompromissoDao extends Dao {
         return datasOcupadas;
     }
     
+    // Salva um novo compromisso no banco de dados
     public void salvar(CompromissoVo compromisso) {
         Connection con = null;
         StringBuilder queryCompromisso = new StringBuilder()
@@ -279,7 +292,8 @@ public class CompromissoDao extends Dao {
                     }
                 }
             }
-
+            
+            // Insere as associações com os exames, se houver.
             if (compromisso.getExamesIds() != null && !compromisso.getExamesIds().isEmpty()) {
                 try (PreparedStatement ps = con.prepareStatement(queryExames.toString())) {
                     for (Integer exameId : compromisso.getExamesIds()) {
@@ -304,10 +318,12 @@ public class CompromissoDao extends Dao {
         }
     }
     
+    // Busca horários ocupados para uma agenda e data específicas
     public List<String> buscarHorariosOcupados(Integer idAgenda, java.util.Date data) {
         return this.buscarHorariosOcupados(idAgenda, data, null);
     }
     
+    // Busca horários ocupados para uma agenda e data
     public List<String> buscarHorariosOcupados(Integer idAgenda, java.util.Date data, Integer codigoCompromissoAExcluir) {
         List<String> horariosOcupados = new ArrayList<>();
         StringBuilder query = new StringBuilder(
@@ -338,7 +354,8 @@ public class CompromissoDao extends Dao {
         }
         return horariosOcupados;
     }
-
+    
+    // Conta o número de compromissos para uma agenda e data específicas
     public int getContagemCompromissos(Integer idAgenda, java.util.Date data, Integer codigoCompromisso) {
         StringBuilder query = new StringBuilder(
             "SELECT COUNT(codigo) FROM compromisso WHERE id_agenda = ? AND data_compromisso = ?"
@@ -367,7 +384,8 @@ public class CompromissoDao extends Dao {
         }
         return 0;
     }
-
+    
+    // Busca os IDs dos exames associados a um compromisso
     public List<Integer> buscarExamesIdsPorCompromisso(Integer codigoCompromisso) {
         List<Integer> examesIds = new ArrayList<>();
         String sql = "SELECT exame_id FROM compromisso_exames WHERE compromisso_codigo = ?";
@@ -384,6 +402,8 @@ public class CompromissoDao extends Dao {
         }
         return examesIds;
     }
+    
+    // Filtra os compromissos em um período de tempo específico
     public List<CompromissoVo> filtrarCompromissosPorPeriodo(java.util.Date dataInicial, java.util.Date dataFinal) {
         List<CompromissoVo> compromissos = new ArrayList<>();
         StringBuilder query = new StringBuilder()

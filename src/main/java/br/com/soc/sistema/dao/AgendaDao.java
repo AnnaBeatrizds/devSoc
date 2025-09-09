@@ -13,6 +13,7 @@ import br.com.soc.sistema.vo.ExameVo;
 
 public class AgendaDao extends Dao {
 
+	// Insere uma nova agenda no banco de dados
     public Integer inserirAgenda(AgendaVo agendaVo) {
         StringBuilder query = new StringBuilder("INSERT INTO agenda (nm_agenda, periodo) VALUES (?, ?)");
         try (
@@ -34,6 +35,7 @@ public class AgendaDao extends Dao {
         return null;
     }
 
+    // Lista todas as agendas cadastradas no banco de dados
     public List<AgendaVo> listarTodasAgendas() {
         List<AgendaVo> agendas = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT codigo, nm_agenda, periodo FROM agenda");
@@ -55,6 +57,7 @@ public class AgendaDao extends Dao {
         return agendas;
     }
 
+    // Busca agendas pelo nome
     public List<AgendaVo> buscarAgendaPorNome(String nome) {
         List<AgendaVo> agendas = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT codigo, nm_agenda, periodo FROM agenda WHERE lower(nm_agenda) like lower(?)");
@@ -77,6 +80,7 @@ public class AgendaDao extends Dao {
         return agendas.isEmpty() ? Collections.emptyList() : agendas;
     }
 
+    //Busca uma agenda pelo seu código, incluindo a lista de exames associados
     public AgendaVo buscarAgendaPorCodigo(Integer codigo) {
         String sql = "SELECT a.codigo, a.nm_agenda, a.periodo, e.id AS exame_id, e.nm_exame " +
                      "FROM agenda a " +
@@ -93,6 +97,7 @@ public class AgendaDao extends Dao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                	// Preenche a agenda uma única vez, e adiciona os exames na lista
                     if (agenda == null) {
                         agenda = new AgendaVo();
                         agenda.setCodigo(rs.getInt("codigo"));
@@ -117,12 +122,14 @@ public class AgendaDao extends Dao {
         return agenda;
     }
 
+    // Edita uma agenda existente, incluindo a atualização dos exames associados
     public void editarAgenda(AgendaVo agendaVo) {
         Connection con = null;
         try {
             con = getConexao();
             con.setAutoCommit(false);
-
+            
+            // Atualiza a agenda principal
             StringBuilder queryAgenda = new StringBuilder("UPDATE agenda SET nm_agenda = ?, periodo = ? WHERE codigo = ?");
             try (PreparedStatement ps = con.prepareStatement(queryAgenda.toString())) {
                 ps.setString(1, agendaVo.getNmAgenda());
@@ -130,13 +137,15 @@ public class AgendaDao extends Dao {
                 ps.setInt(3, agendaVo.getCodigo());
                 ps.executeUpdate();
             }
-
+            
+            // Exclui todos os exames associados antes de reinserir.
             StringBuilder queryDeleteExames = new StringBuilder("DELETE FROM agenda_exames WHERE agenda_codigo = ?");
             try (PreparedStatement ps = con.prepareStatement(queryDeleteExames.toString())) {
                 ps.setInt(1, agendaVo.getCodigo());
                 ps.executeUpdate();
             }
-
+            
+            // Insere os novos exames selecionados
             if (agendaVo.getExamesIds() != null && !agendaVo.getExamesIds().isEmpty()) {
                 StringBuilder queryInsertExame = new StringBuilder("INSERT INTO agenda_exames (agenda_codigo, exame_id) VALUES (?, ?)");
                 try (PreparedStatement ps = con.prepareStatement(queryInsertExame.toString())) {
